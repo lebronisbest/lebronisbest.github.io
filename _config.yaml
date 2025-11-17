@@ -1,4 +1,4 @@
-# 사이트 기본 설정
+# 사이트 기본 정보
 title: "myCPBL Dev Log"
 description: "개발과 일상을 기록하는 블로그"
 lang: ko
@@ -18,12 +18,10 @@ plugins:
   - jekyll-feed
   - jekyll-remote-theme
 
-# 네비게이션
+# 네비게이션 메뉴
 nav-links:
   - title: 홈
     url: /
-  - title: 블로그
-    url: /blog
   - title: 소개
     url: /about
 
@@ -31,10 +29,5 @@ nav-links:
 social-network-links:
   github: lebronisbest
 
-# 테마 설정
-avatar: ""  # 프로필 이미지 URL (선택사항)
-theme-color: "#667eea"  # 테마 색상
-
-# 댓글 시스템 (선택사항)
-comments:
-  provider: ""  # disqus, giscus 등 사용 가능
+# 테마 색상
+theme-color: "#667eea"
