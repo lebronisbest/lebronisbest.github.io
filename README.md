@@ -6,7 +6,7 @@
 
 1. GitHub 저장소의 `_posts` 폴더로 이동
 2. "Add file" → "Create new file" 클릭
-3. 파일명: `2024-01-20-제목.md` 형식
+3. 파일명: `2025-11-18-제목.md` 형식
 4. 아래 템플릿 사용:
 
 ```markdown
@@ -14,7 +14,7 @@
 layout: post
 title: "포스트 제목"
 subtitle: "부제목 (선택사항)"
-date: 2024-01-20
+date: 2025-11-18
 author: lebronisbest
 tags: [태그1, 태그2]
 ---
