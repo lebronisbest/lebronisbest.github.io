@@ -1,19 +1,12 @@
 ---
 layout: page
-title: 홈
-subtitle: 개발과 일상을 기록하는 블로그
+title: 포스트 목록
+subtitle: 모든 포스트
 ---
 
-<div class="main-explain-area jumbotron">
-  <h2>안녕하세요! 👋</h2>
-  <p>개발과 일상을 기록하는 블로그에 오신 것을 환영합니다.</p>
-</div>
-
-## 최근 포스트
-
-{% for post in site.posts limit: 10 %}
+{% for post in site.posts %}
 <div class="post-preview">
-  <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+  <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
   {% if post.subtitle %}
   <p class="post-subtitle">{{ post.subtitle }}</p>
   {% endif %}
@@ -28,8 +21,9 @@ subtitle: 개발과 일상을 기록하는 블로그
     {% endif %}
   </p>
   {% if post.excerpt %}
-  <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+  <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 50 }}</p>
   {% endif %}
 </div>
 <hr>
 {% endfor %}
+

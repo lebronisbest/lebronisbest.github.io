@@ -22,6 +22,8 @@ plugins:
 nav-links:
   - title: 홈
     url: /
+  - title: 포스트
+    url: /posts
   - title: 소개
     url: /about
 
