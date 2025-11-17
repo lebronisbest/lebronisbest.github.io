@@ -1,19 +1,25 @@
+# 사이트 기본 설정
 title: "myCPBL Dev Log"
 description: "개발과 일상을 기록하는 블로그"
-theme: minima
-markdown: kramdown
 lang: ko
 author: "lebronisbest"
 url: "https://lebronisbest.github.io"
 baseurl: ""
 
+# Beautiful Jekyll 테마 사용
+remote_theme: daattali/beautiful-jekyll
+
+# Markdown 설정
+markdown: kramdown
+highlighter: rouge
+
 # 플러그인
 plugins:
   - jekyll-feed
-  - jekyll-sitemap
+  - jekyll-remote-theme
 
 # 네비게이션
-navigation:
+nav-links:
   - title: 홈
     url: /
   - title: 블로그
@@ -21,7 +27,14 @@ navigation:
   - title: 소개
     url: /about
 
-# 소셜 링크 (선택사항)
-social:
+# 소셜 링크
+social-network-links:
   github: lebronisbest
 
+# 테마 설정
+avatar: ""  # 프로필 이미지 URL (선택사항)
+theme-color: "#667eea"  # 테마 색상
+
+# 댓글 시스템 (선택사항)
+comments:
+  provider: ""  # disqus, giscus 등 사용 가능

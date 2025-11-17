@@ -2,45 +2,49 @@
 
 개발과 일상을 기록하는 블로그입니다.
 
-## 구조
+## 🎨 Beautiful Jekyll 테마 적용
 
-- `_config.yaml` - Jekyll 설정 파일
-- `_layouts/` - 페이지 레이아웃 템플릿
-- `_includes/` - 재사용 가능한 HTML 컴포넌트
-- `_posts/` - 블로그 포스트 (YYYY-MM-DD-title.md 형식)
-- `assets/` - CSS, JavaScript, 이미지 등 정적 파일
-- `index.md` - 홈페이지
-- `blog.md` - 블로그 목록 페이지
-- `about.md` - 소개 페이지
+이 블로그는 **Beautiful Jekyll** 테마를 사용합니다.
+- ✨ 깔끔하고 모던한 디자인
+- 📱 완전 반응형
+- 🎯 사용하기 매우 쉬움
 
-## 포스트 작성하기
+## 📝 포스트 작성하기
 
-`_posts/` 디렉터리에 다음 형식으로 파일을 생성하세요:
+### 가장 쉬운 방법
+
+1. GitHub 저장소의 `_posts` 폴더로 이동
+2. "Add file" → "Create new file" 클릭
+3. 파일명: `2024-01-20-제목.md` 형식
+4. 아래 템플릿 복사:
 
 ```markdown
 ---
 layout: post
 title: "포스트 제목"
-date: 2024-01-01
-categories: [카테고리]
+subtitle: "부제목 (선택사항)"
+date: 2024-01-20
 author: lebronisbest
+tags: [태그1, 태그2]
 ---
 
-포스트 내용...
+여기에 본문을 작성하세요.
 ```
 
-## 로컬에서 실행하기
+5. "Commit new file" 클릭 → 자동으로 블로그에 반영!
 
-Jekyll이 설치되어 있다면:
+## 🎯 빠른 링크
 
-```bash
-bundle install
-bundle exec jekyll serve
-```
+- **블로그**: https://lebronisbest.github.io
+- **포스트 작성**: https://github.com/lebronisbest/lebronisbest.github.io/new/main/_posts
+- **테마 문서**: https://beautifuljekyll.com/
 
-브라우저에서 `http://localhost:4000`으로 접속하세요.
+## 💡 팁
 
-## GitHub Pages 배포
+- **태그 사용**: 포스트에 태그를 추가하면 자동으로 분류됩니다
+- **이미지**: `assets/img/` 폴더에 이미지를 업로드하고 참조하세요
+- **자동 배포**: 커밋하면 1-5분 내에 자동으로 블로그에 반영됩니다
 
-이 저장소를 GitHub에 푸시하면 자동으로 GitHub Pages에 배포됩니다.
+---
 
+**이제 네이버 블로그처럼 쉽게 사용할 수 있습니다!** 🎉
