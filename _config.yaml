@@ -31,3 +31,6 @@ social-network-links:
 
 # 테마 색상
 theme-color: "#667eea"
+
+# 미래 날짜 포스트도 표시
+future: true

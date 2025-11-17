@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: 홈
 subtitle: 개발과 일상을 기록하는 블로그
 ---
