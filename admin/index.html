@@ -3,23 +3,142 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Content Manager</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <title>블로그 관리 - {{ site.title }}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .btn {
+      display: block;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e5e7eb;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .info {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+    .info h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .info p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .info ul {
+      margin-top: 10px;
+      padding-left: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-  <!-- Include the script that builds the page and powers Decap CMS -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
-    }
-  </script>
+  <div class="container">
+    <h1>✏️ 블로그 관리</h1>
+    <p class="subtitle">포스트를 쉽게 작성하고 관리하세요</p>
+    
+    <div class="button-group">
+      <a href="https://github.com/lebronisbest/lebronisbest.github.io/new/main/_posts" target="_blank" class="btn">
+        📝 새 포스트 작성하기
+      </a>
+      <a href="https://github.com/lebronisbest/lebronisbest.github.io/tree/main/_posts" target="_blank" class="btn btn-secondary">
+        📋 포스트 목록 보기
+      </a>
+      <a href="https://lebronisbest.github.io" target="_blank" class="btn btn-secondary">
+        🏠 블로그로 돌아가기
+      </a>
+    </div>
+    
+    <div class="info">
+      <h3>💡 사용 방법</h3>
+      <p><strong>새 포스트 작성:</strong></p>
+      <ul>
+        <li>파일명: <code>2024-01-20-제목.md</code> 형식으로 작성</li>
+        <li>아래 템플릿을 복사해서 사용하세요</li>
+      </ul>
+      <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 5px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+<pre>---
+layout: post
+title: "포스트 제목"
+date: 2024-01-20
+categories: [일반]
+author: lebronisbest
+---
+
+여기에 본문을 작성하세요.
+
+## 소제목
+
+- 리스트 항목
+- 리스트 항목
+
+**굵게**, *기울임* 사용 가능!</pre>
+      </div>
+      <p style="margin-top: 15px; font-size: 12px; color: #999;">
+        💡 저장 후 몇 분이면 자동으로 블로그에 반영됩니다!
+      </p>
+    </div>
+  </div>
 </body>
 </html>
-
