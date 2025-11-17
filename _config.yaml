@@ -1,0 +1,27 @@
+title: "myCPBL Dev Log"
+description: "개발과 일상을 기록하는 블로그"
+theme: minima
+markdown: kramdown
+lang: ko
+author: "lebronisbest"
+url: "https://lebronisbest.github.io"
+baseurl: ""
+
+# 플러그인
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# 네비게이션
+navigation:
+  - title: 홈
+    url: /
+  - title: 블로그
+    url: /blog
+  - title: 소개
+    url: /about
+
+# 소셜 링크 (선택사항)
+social:
+  github: lebronisbest
+
