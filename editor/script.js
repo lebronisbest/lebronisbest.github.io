@@ -1351,7 +1351,7 @@ function showMessage(message, type = 'info') {
     if (type === 'success') {
         backgroundColor = 'var(--success)';
     } else if (type === 'error') {
-        backgroundColor = '#e74c3c'; // 빨간색
+        backgroundColor = 'var(--danger)'; // CSS 변수 사용
     } else {
         backgroundColor = 'var(--accent-color)';
     }
