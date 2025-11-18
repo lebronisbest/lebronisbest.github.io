@@ -218,10 +218,12 @@ body {
 
 .posts-list {
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     padding: 0.5rem;
     min-height: 0;
+    height: 0; /* flex: 1과 함께 사용하여 높이 제한 */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 커스텀 스크롤바 - 포스트 목록 */
@@ -288,10 +290,11 @@ body {
     display: flex;
     flex-direction: column;
     background: var(--bg-primary);
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    height: 100%;
+    height: 0; /* flex: 1과 함께 사용하여 높이 제한 */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 커스텀 스크롤바 - 메인 에디터 */
@@ -486,8 +489,9 @@ body {
     padding: 2rem;
     color: var(--text-primary);
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 커스텀 스크롤바 - 에디터 전용 */
