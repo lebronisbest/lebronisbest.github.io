@@ -430,8 +430,15 @@ function convertHtmlToMarkdown() {
         // Quill의 Delta를 HTML로 변환
         const html = quill.root.innerHTML;
         
-        if (!html || html.trim() === '') {
+        // 빈 에디터 체크 (Quill의 기본 빈 상태: <p><br></p>)
+        const isEmpty = !html || 
+                       html.trim() === '' || 
+                       html.trim() === '<p><br></p>' || 
+                       html.trim() === '<p></p>';
+        
+        if (isEmpty) {
             markdownEditor.value = '';
+            console.warn('에디터가 비어있습니다.');
             return;
         }
         
