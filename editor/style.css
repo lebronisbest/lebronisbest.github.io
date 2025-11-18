@@ -489,7 +489,7 @@ body {
 .ql-editor {
     min-height: 500px;
     padding: 2rem;
-    padding-bottom: 50vh; /* 하단 여백 추가 - 스크롤이 더 아래로 내려가도록 */
+    padding-bottom: 100vh; /* 하단 여백 추가 - 스크롤이 더 아래로 내려가도록 */
     color: var(--text-primary);
     flex: 1;
     overflow: visible;
