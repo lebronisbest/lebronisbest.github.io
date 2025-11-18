@@ -972,6 +972,44 @@ async function savePost(isPublish) {
             body.sha = currentPost.sha;
         }
         
+        // PUT 요청 시 최신 sha 확인 (충돌 방지)
+        if (method === 'PUT' && currentPost && currentPost.sha) {
+            try {
+                // 최신 파일 정보 가져오기
+                const checkResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`, {
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                    },
+                });
+                
+                if (checkResponse.ok) {
+                    const fileInfo = await checkResponse.json();
+                    // sha가 다르면 로컬에서 수정된 것
+                    if (fileInfo.sha !== currentPost.sha) {
+                        const shouldContinue = confirm(
+                            '이 포스트는 다른 곳에서 수정되었습니다. (로컬에서 수정했을 수 있습니다)\n\n' +
+                            '계속 저장하면 로컬 변경사항이 덮어씌워질 수 있습니다.\n' +
+                            '계속하시겠습니까?'
+                        );
+                        
+                        if (!shouldContinue) {
+                            // 최신 버전 다시 불러오기
+                            await loadPost(currentPost);
+                            showMessage('최신 버전을 불러왔습니다. 다시 확인해주세요.', 'info');
+                            return;
+                        }
+                        
+                        // 최신 sha로 업데이트
+                        body.sha = fileInfo.sha;
+                        currentPost.sha = fileInfo.sha;
+                    }
+                }
+            } catch (checkError) {
+                console.warn('최신 버전 확인 실패:', checkError);
+                // 확인 실패해도 계속 진행
+            }
+        }
+        
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -983,6 +1021,24 @@ async function savePost(isPublish) {
         
         if (!response.ok) {
             const error = await response.json();
+            
+            // 충돌 에러 처리
+            if (response.status === 409 || error.message?.includes('sha')) {
+                const shouldRetry = confirm(
+                    '파일이 다른 곳에서 수정되었습니다.\n\n' +
+                    '최신 버전을 불러와서 다시 저장하시겠습니까?'
+                );
+                
+                if (shouldRetry) {
+                    // 최신 버전 불러오기
+                    if (currentPost) {
+                        await loadPost(currentPost);
+                        showMessage('최신 버전을 불러왔습니다. 다시 저장해주세요.', 'info');
+                    }
+                    return;
+                }
+            }
+            
             throw new Error(error.message || '저장 실패');
         }
         
