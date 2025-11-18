@@ -33,6 +33,18 @@ const previewImg = document.getElementById('previewImg');
 const imageNameInput = document.getElementById('imageNameInput');
 const confirmUpload = document.getElementById('confirmUpload');
 const cancelUpload = document.getElementById('cancelUpload');
+const oauthLoginBtn = document.getElementById('oauthLoginBtn');
+const setupOAuthLink = document.getElementById('setupOAuthLink');
+const oauthSetupModal = document.getElementById('oauthSetupModal');
+const closeOAuthSetup = document.getElementById('closeOAuthSetup');
+const cancelOAuthSetup = document.getElementById('cancelOAuthSetup');
+const saveClientId = document.getElementById('saveClientId');
+const clientIdInput = document.getElementById('clientIdInput');
+const homepageUrl = document.getElementById('homepageUrl');
+const callbackUrl = document.getElementById('callbackUrl');
+
+// OAuth 설정
+let oauthClientId = null;
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,6 +56,21 @@ document.addEventListener('DOMContentLoaded', () => {
         showEditor();
         loadPosts();
     }
+    
+    // 저장된 Client ID 확인
+    const savedClientId = localStorage.getItem('github_oauth_client_id');
+    if (savedClientId) {
+        oauthClientId = savedClientId;
+        clientIdInput.value = savedClientId;
+    }
+    
+    // OAuth callback 처리
+    handleOAuthCallback();
+    
+    // URL 설정
+    const currentUrl = window.location.origin + window.location.pathname;
+    homepageUrl.textContent = currentUrl;
+    callbackUrl.textContent = currentUrl;
 
     // 이벤트 리스너 설정
     setupEventListeners();
@@ -51,11 +78,227 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     setupToolbar();
     setupImageUpload();
+    setupOAuth();
     
     // 오늘 날짜로 기본 설정
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
 });
+
+// OAuth 설정
+function setupOAuth() {
+    oauthLoginBtn.addEventListener('click', handleOAuthLogin);
+    setupOAuthLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showOAuthSetupModal();
+    });
+    closeOAuthSetup.addEventListener('click', closeOAuthSetupModal);
+    cancelOAuthSetup.addEventListener('click', closeOAuthSetupModal);
+    saveClientId.addEventListener('click', saveOAuthClientId);
+    
+    oauthSetupModal.addEventListener('click', (e) => {
+        if (e.target === oauthSetupModal) {
+            closeOAuthSetupModal();
+        }
+    });
+}
+
+// OAuth 로그인 처리 (Device Flow 사용)
+async function handleOAuthLogin() {
+    if (!oauthClientId) {
+        showOAuthSetupModal();
+        return;
+    }
+    
+    try {
+        oauthLoginBtn.disabled = true;
+        oauthLoginBtn.textContent = '인증 중...';
+        
+        // Device Flow 시작
+        const deviceCodeResponse = await fetch('https://github.com/login/device/code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                client_id: oauthClientId,
+                scope: 'repo',
+            }),
+        });
+        
+        if (!deviceCodeResponse.ok) {
+            throw new Error('Device code 요청 실패');
+        }
+        
+        const deviceData = await deviceCodeResponse.json();
+        const { device_code, user_code, verification_uri, expires_in, interval } = deviceData;
+        
+        // 사용자에게 인증 정보 표시
+        showDeviceAuthModal(user_code, verification_uri, device_code, interval);
+        
+    } catch (error) {
+        console.error('OAuth 로그인 실패:', error);
+        alert('로그인 실패: ' + error.message);
+        oauthLoginBtn.disabled = false;
+        oauthLoginBtn.textContent = 'GitHub로 로그인';
+    }
+}
+
+// Device Auth Modal 표시 및 폴링
+function showDeviceAuthModal(userCode, verificationUri, deviceCode, interval) {
+    // Modal 생성
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>GitHub 로그인</h3>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="margin-bottom: 1.5rem;">아래 코드를 입력하고 GitHub에서 인증해주세요:</p>
+                <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <div style="font-size: 2rem; font-weight: 600; letter-spacing: 0.5rem; color: var(--accent-color);">
+                        ${userCode.match(/.{1,3}/g).join('-')}
+                    </div>
+                </div>
+                <p style="margin-bottom: 1.5rem;">
+                    <a href="${verificationUri}" target="_blank" class="btn btn-primary" style="display: inline-block;">
+                        GitHub에서 인증하기
+                    </a>
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    새 창에서 인증을 완료하면 자동으로 로그인됩니다.
+                </p>
+                <div id="authStatus" style="margin-top: 1rem; color: var(--text-secondary);"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDeviceAuth">취소</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const cancelBtn = modal.querySelector('#cancelDeviceAuth');
+    const statusDiv = modal.querySelector('#authStatus');
+    
+    // 토큰 폴링 함수
+    let currentInterval = interval * 1000;
+    let pollInterval = null;
+    
+    cancelBtn.addEventListener('click', () => {
+        if (pollInterval) clearInterval(pollInterval);
+        modal.remove();
+        oauthLoginBtn.disabled = false;
+        oauthLoginBtn.textContent = 'GitHub로 로그인';
+    });
+    
+    const pollForToken = async () => {
+        try {
+            const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    client_id: oauthClientId,
+                    device_code: deviceCode,
+                    grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+                }),
+            });
+            
+            const tokenData = await tokenResponse.json();
+            
+            if (tokenData.access_token) {
+                // 성공!
+                if (pollInterval) clearInterval(pollInterval);
+                githubToken = tokenData.access_token;
+                localStorage.setItem('github_token', githubToken);
+                modal.remove();
+                showEditor();
+                loadPosts();
+                showMessage('로그인 성공!', 'success');
+                oauthLoginBtn.disabled = false;
+                oauthLoginBtn.textContent = 'GitHub로 로그인';
+            } else if (tokenData.error === 'authorization_pending') {
+                statusDiv.textContent = '인증 대기 중...';
+            } else if (tokenData.error === 'slow_down') {
+                // 폴링 간격 늘리기
+                currentInterval = currentInterval * 2;
+                if (pollInterval) clearInterval(pollInterval);
+                pollInterval = setInterval(pollForToken, currentInterval);
+                statusDiv.textContent = '인증 대기 중...';
+            } else if (tokenData.error === 'expired_token') {
+                if (pollInterval) clearInterval(pollInterval);
+                statusDiv.innerHTML = '<span style="color: var(--danger);">인증 시간이 만료되었습니다. 다시 시도해주세요.</span>';
+            } else if (tokenData.error) {
+                if (pollInterval) clearInterval(pollInterval);
+                statusDiv.innerHTML = `<span style="color: var(--danger);">오류: ${tokenData.error_description || tokenData.error}</span>`;
+            }
+        } catch (error) {
+            console.error('토큰 폴링 실패:', error);
+        }
+    };
+    
+    // 토큰 폴링 시작
+    pollInterval = setInterval(pollForToken, currentInterval);
+    
+    // 만료 시간 후 자동 정리
+    setTimeout(() => {
+        if (pollInterval) {
+            clearInterval(pollInterval);
+            if (modal.parentNode) {
+                modal.remove();
+                oauthLoginBtn.disabled = false;
+                oauthLoginBtn.textContent = 'GitHub로 로그인';
+            }
+        }
+    }, 10 * 60 * 1000); // 10분
+}
+
+// OAuth Callback 처리 (Device Flow 사용 시 불필요하지만 호환성을 위해 유지)
+function handleOAuthCallback() {
+    // Device Flow를 사용하므로 callback 처리는 필요 없음
+    // URL 파라미터 정리만 수행
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('code') || urlParams.has('state')) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
+// OAuth Setup Modal 표시
+function showOAuthSetupModal() {
+    oauthSetupModal.classList.add('active');
+    if (oauthClientId) {
+        clientIdInput.value = oauthClientId;
+    }
+}
+
+// OAuth Setup Modal 닫기
+function closeOAuthSetupModal() {
+    oauthSetupModal.classList.remove('active');
+}
+
+// OAuth Client ID 저장
+function saveOAuthClientId() {
+    const clientId = clientIdInput.value.trim();
+    if (!clientId) {
+        alert('Client ID를 입력해주세요.');
+        return;
+    }
+    
+    oauthClientId = clientId;
+    localStorage.setItem('github_oauth_client_id', clientId);
+    closeOAuthSetupModal();
+    showMessage('Client ID가 저장되었습니다.', 'success');
+}
+
+// 랜덤 문자열 생성
+function generateRandomString() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
 
 // 이벤트 리스너 설정
 function setupEventListeners() {
