@@ -987,7 +987,12 @@ async function savePost(isPublish) {
         // GitHub API 요청
         // GitHub Contents API는 PUT만 사용 (sha가 있으면 업데이트, 없으면 생성)
         const targetPath = currentPost && currentPost.path ? currentPost.path : path;
-        const url = `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`;
+        
+        // 경로 인코딩 (특수문자 처리)
+        const encodedPath = encodeURIComponent(targetPath).replace(/%2F/g, '/');
+        const url = `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}`;
+        
+        console.log('저장 요청:', { targetPath, encodedPath, url, hasSha: !!(currentPost && currentPost.sha) });
         
         const body = {
             message: isPublish ? `포스트 발행: ${titleInput.value}` : `포스트 저장: ${titleInput.value}`,
@@ -1047,10 +1052,37 @@ async function savePost(isPublish) {
         });
         
         if (!response.ok) {
-            const error = await response.json();
+            let errorMessage = '저장 실패';
+            let errorData = null;
             
-            // 충돌 에러 처리
-            if (response.status === 409 || error.message?.includes('sha')) {
+            try {
+                errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                // JSON 파싱 실패 시 상태 코드로 메시지 생성
+                errorMessage = `저장 실패: ${response.status} ${response.statusText}`;
+            }
+            
+            console.error('저장 실패 상세:', {
+                status: response.status,
+                statusText: response.statusText,
+                url: url,
+                error: errorData,
+                body: body
+            });
+            
+            // 404 Not Found 에러 처리
+            if (response.status === 404) {
+                // 새 파일 생성 시 404는 정상일 수 있음 (파일이 없으므로)
+                // 하지만 API 엔드포인트 자체가 404면 문제
+                if (errorData && errorData.message?.includes('Not Found')) {
+                    // 저장소나 경로가 잘못되었을 수 있음
+                    errorMessage = '저장소를 찾을 수 없습니다. 저장소 이름과 경로를 확인해주세요.';
+                }
+            }
+            
+            // 충돌 에러 처리 (409)
+            if (response.status === 409 || errorData?.message?.includes('sha')) {
                 const shouldRetry = confirm(
                     '파일이 다른 곳에서 수정되었습니다.\n\n' +
                     '최신 버전을 불러와서 다시 저장하시겠습니까?'
@@ -1066,7 +1098,7 @@ async function savePost(isPublish) {
                 }
             }
             
-            throw new Error(error.message || '저장 실패');
+            throw new Error(errorMessage);
         }
         
         const result = await response.json();
