@@ -1062,6 +1062,11 @@ async function handlePublish() {
 
 // 포스트 저장
 async function savePost(isPublish) {
+    // 변수 선언을 함수 시작 부분에서 먼저 수행
+    let fileName = '';
+    let path = '';
+    let targetPath = '';
+    
     try {
         // Front Matter 생성
         // 날짜 형식 검증 (YYYY-MM-DD)
@@ -1122,8 +1127,8 @@ async function savePost(isPublish) {
             titleSlug = 'untitled';
         }
         
-        const fileName = `${date}-${titleSlug}.md`;
-        const path = `${POSTS_PATH}/${fileName}`;
+        fileName = `${date}-${titleSlug}.md`;
+        path = `${POSTS_PATH}/${fileName}`;
         
         // 파일명 검증 (Jekyll 요구사항)
         if (!/^\d{4}-\d{2}-\d{2}-.+\.md$/.test(fileName)) {
@@ -1144,7 +1149,7 @@ async function savePost(isPublish) {
         
         // GitHub API 요청
         // GitHub Contents API는 PUT만 사용 (sha가 있으면 업데이트, 없으면 생성)
-        const targetPath = currentPost && currentPost.path ? currentPost.path : path;
+        targetPath = currentPost && currentPost.path ? currentPost.path : path;
         
         // 경로 인코딩 (특수문자 처리)
         const encodedPath = encodeURIComponent(targetPath).replace(/%2F/g, '/');
