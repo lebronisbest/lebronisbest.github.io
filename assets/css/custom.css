@@ -1,828 +1,105 @@
-/* 애플 스타일 - 깔끔하고 세련된 디자인 */
+/* Custom CSS for Blog Features */
 
-/* CSS Variables for theming */
+/* Dark Mode Variables */
 :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f7;
-    --bg-tertiary: #e8e8ed;
-    --text-primary: #1d1d1f;
-    --text-secondary: #86868b;
-    --text-tertiary: #d2d2d7;
-    --accent-color: #0071e3;
-    --accent-hover: #0077ed;
-    --border-color: #d2d2d7;
-    --code-bg: #f5f5f7;
-    --shadow-sm: rgba(0, 0, 0, 0.1);
-    --shadow-md: rgba(0, 0, 0, 0.15);
-    --shadow-lg: rgba(0, 0, 0, 0.2);
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --link-color: #007bff;
+  --code-bg: #f8f9fa;
 }
 
-/* Dark mode variables */
 [data-theme="dark"] {
-    --bg-primary: #000000;
-    --bg-secondary: #1d1d1f;
-    --bg-tertiary: #2d2d2f;
-    --text-primary: #f5f5f7;
-    --text-secondary: #a1a1a6;
-    --text-tertiary: #6e6e73;
-    --accent-color: #2997ff;
-    --accent-hover: #0a84ff;
-    --border-color: #424245;
-    --code-bg: #1d1d1f;
-    --shadow-sm: rgba(255, 255, 255, 0.05);
-    --shadow-md: rgba(255, 255, 255, 0.08);
-    --shadow-lg: rgba(255, 255, 255, 0.12);
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --link-color: #66b0ff;
+  --code-bg: #2d2d2d;
 }
 
-/* 전체적인 리셋 */
-* {
-    box-sizing: border-box;
-}
-
+/* Apply Dark Mode */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "Noto Sans KR", sans-serif;
-    line-height: 1.6;
-    color: var(--text-primary);
-    background: var(--bg-primary);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* Dark mode toggle button */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+/* Dark Mode specific overrides for Beautiful Jekyll */
+[data-theme="dark"] .navbar-custom {
+  background-color: #222;
+  border-bottom: 1px solid #444;
 }
 
-.theme-toggle:hover {
-    background: var(--bg-tertiary);
-    transform: scale(1.05);
+[data-theme="dark"] .footer-custom {
+  background-color: #222;
+  border-top: 1px solid #444;
 }
 
-.theme-toggle svg {
-    width: 20px;
-    height: 20px;
-    fill: var(--text-primary);
-    transition: transform 0.3s ease;
+/* Table of Contents */
+.toc-container {
+  background-color: var(--code-bg);
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
 }
 
-.theme-toggle:hover svg {
-    transform: rotate(20deg);
+[data-theme="dark"] .toc-container {
+  border-color: #444;
 }
 
-/* Smooth scroll */
-html {
-    scroll-behavior: smooth;
+.toc-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.2em;
 }
 
-/* Fade in animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+#toc ul {
+  list-style-type: none;
+  padding-left: 20px;
 }
 
-.fade-in {
-    animation: fadeInUp 0.6s ease-out;
+#toc > ul {
+  padding-left: 0;
 }
 
-/* Stagger animation for post cards */
-.post-card {
-    animation: fadeInUp 0.6s ease-out backwards;
+/* Copy Code Button */
+.code-header {
+  display: flex;
+  justify-content: flex-end;
+  background-color: #f1f1f1;
+  padding: 5px 10px;
+  border-radius: 5px 5px 0 0;
 }
 
-.post-card:nth-child(1) { animation-delay: 0.1s; }
-.post-card:nth-child(2) { animation-delay: 0.2s; }
-.post-card:nth-child(3) { animation-delay: 0.3s; }
-.post-card:nth-child(4) { animation-delay: 0.4s; }
-.post-card:nth-child(5) { animation-delay: 0.5s; }
-.post-card:nth-child(6) { animation-delay: 0.6s; }
-.post-card:nth-child(7) { animation-delay: 0.7s; }
-.post-card:nth-child(8) { animation-delay: 0.8s; }
-.post-card:nth-child(9) { animation-delay: 0.9s; }
-.post-card:nth-child(10) { animation-delay: 1s; }
-
-/* 히어로 섹션 - 애플 스타일 */
-.hero-section {
-    text-align: center;
-    padding: 8rem 2rem;
-    margin: 0 auto 8rem;
-    max-width: 1200px;
-    background: transparent;
-}
-
-.hero-title {
-    font-size: 4.5rem;
-    font-weight: 300;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-}
-
-.hero-description {
-    font-size: 1.5rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-    max-width: 700px;
-    margin: 0 auto;
-    line-height: 1.5;
-}
-
-/* 포스트 섹션 */
-.posts-section {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 300;
-    margin-bottom: 5rem;
-    color: var(--text-primary);
-    text-align: center;
-    letter-spacing: -0.02em;
-}
-
-/* 포스트 카드 - 애플 스타일 */
-.post-card {
-    margin-bottom: 6rem;
-    padding: 2rem;
-    background: transparent;
-    border: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 12px;
-}
-
-.post-card:hover {
-    background: var(--bg-secondary);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--shadow-md);
-}
-
-.post-title {
-    font-size: 2.25rem;
-    font-weight: 300;
-    margin-bottom: 1rem;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-}
-
-.post-title a {
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.post-title a:hover {
-    color: var(--accent-color);
-}
-
-.post-subtitle {
-    color: var(--text-secondary);
-    font-size: 1.25rem;
-    font-weight: 400;
-    margin-bottom: 1.5rem;
-    font-style: normal;
-    line-height: 1.4;
-}
-
-.post-meta {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-}
-
-.reading-time {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 400;
-}
-
-.post-meta time {
-    color: var(--text-secondary);
-}
-
-.post-tags {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.tag {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 400;
-    transition: all 0.2s ease;
-    border: none;
-}
-
-.tag:hover {
-    background: var(--bg-tertiary);
-    transform: translateY(-2px);
-}
-
-.post-excerpt {
-    color: var(--text-primary);
-    line-height: 1.7;
-    margin-bottom: 2rem;
-    font-size: 1.125rem;
-    font-weight: 400;
-    max-width: 700px;
-}
-
-.read-more {
-    display: inline-block;
-    color: var(--accent-color);
-    font-weight: 400;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    margin-top: 1rem;
-}
-
-.read-more:hover {
-    color: var(--accent-hover);
-    text-decoration: none;
-}
-
-.read-more::after {
-    content: " →";
-    transition: transform 0.3s ease;
-    display: inline-block;
-}
-
-.read-more:hover::after {
-    transform: translateX(4px);
-}
-
-/* 타이포그래피 */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-}
-
-h1 {
-    font-size: 4.5rem;
-    font-weight: 300;
-}
-
-h2 {
-    font-size: 2.5rem;
-    font-weight: 300;
-}
-
-h3 {
-    font-size: 2.25rem;
-    font-weight: 300;
-}
-
-/* 포스트 본문 스타일 */
-.post-content {
-    max-width: 700px;
-    margin: 0 auto;
-    line-height: 1.8;
-    font-size: 1.125rem;
-    color: var(--text-primary);
-    padding: 0 2rem;
-}
-
-.post-content p {
-    margin-bottom: 2rem;
-    color: var(--text-primary);
-    font-weight: 400;
-    line-height: 1.8;
-}
-
-.post-content h2 {
-    margin-top: 4rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 2rem;
-    font-weight: 300;
-    letter-spacing: -0.02em;
-}
-
-.post-content h3 {
-    margin-top: 3rem;
-    margin-bottom: 1.5rem;
-    font-size: 1.75rem;
-    font-weight: 300;
-    letter-spacing: -0.02em;
-}
-
-/* 링크 스타일 */
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-a:hover {
-    color: var(--accent-hover);
-    text-decoration: underline;
-}
-
-/* 이미지 스타일 */
-img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0;
-    margin: 3rem 0;
-    box-shadow: none;
-    display: block;
-}
-
-/* 코드 블록 */
-code {
-    background: var(--code-bg);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.9em;
-    color: var(--text-primary);
-    font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-    font-weight: 400;
-}
-
-pre {
-    background: var(--code-bg);
-    padding: 2rem;
-    border-radius: 12px;
-    overflow-x: auto;
-    border: 1px solid var(--border-color);
-    margin: 3rem 0;
-    font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-}
-
-pre code {
-    background: transparent;
-    padding: 0;
-    color: var(--text-primary);
-}
-
-/* 페이지 제목 */
-.page-header h1 {
-    font-size: 4.5rem;
-    font-weight: 300;
-    margin-bottom: 1rem;
-    letter-spacing: -0.03em;
-    color: var(--text-primary);
-}
-
-.page-header .subtitle {
-    font-size: 1.5rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-}
-
-/* 구분선 제거 */
-hr {
-    display: none;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .hero-section {
-        padding: 4rem 1.5rem;
-        margin-bottom: 4rem;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-description {
-        font-size: 1.25rem;
-    }
-    
-    .post-card {
-        margin-bottom: 4rem;
-    }
-    
-    .post-title {
-        font-size: 1.75rem;
-    }
-    
-    .post-subtitle {
-        font-size: 1.125rem;
-    }
-    
-    .posts-section {
-        padding: 0 1.5rem;
-    }
-    
-    .section-title {
-        font-size: 2rem;
-        margin-bottom: 3rem;
-    }
-    
-    .post-content {
-        padding: 0 1.5rem;
-        font-size: 1rem;
-    }
-    
-    h1 {
-        font-size: 2.5rem;
-    }
-    
-    h2 {
-        font-size: 2rem;
-    }
-    
-    h3 {
-        font-size: 1.75rem;
-    }
-}
-
-/* 스크롤바 스타일 */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--text-tertiary);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
+[data-theme="dark"] .code-header {
+  background-color: #333;
 }
 
-/* 애플 스타일 버튼/링크 */
-.button {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    background: var(--accent-color);
-    color: white;
-    border-radius: 22px;
-    text-decoration: none;
-    font-weight: 400;
-    transition: all 0.3s ease;
-    border: none;
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: #666;
 }
 
-.button:hover {
-    background: var(--accent-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--shadow-md);
-    color: white;
-    text-decoration: none;
+[data-theme="dark"] .copy-btn {
+  color: #aaa;
 }
 
-.button-secondary {
-    background: transparent;
-    color: var(--accent-color);
-    border: 1px solid var(--accent-color);
+.copy-btn:hover {
+  color: #000;
 }
 
-.button-secondary:hover {
-    background: var(--accent-color);
-    color: white;
-    text-decoration: none;
+[data-theme="dark"] .copy-btn:hover {
+  color: #fff;
 }
-
-/* Search section */
-.search-section {
-    max-width: 980px;
-    margin: 0 auto 4rem;
-    padding: 0 2rem;
-}
-
-.search-container {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.search-input {
-    width: 100%;
-    padding: 1rem 1.5rem 1rem 3rem;
-    font-size: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 22px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "Noto Sans KR", sans-serif;
-    transition: all 0.3s ease;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 4px rgba(41, 151, 255, 0.1);
-}
-
-.search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-    pointer-events: none;
-}
-
-/* Back to top button */
-.back-to-top {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 44px;
-    height: 44px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 999;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-.back-to-top.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.back-to-top:hover {
-    background: var(--bg-tertiary);
-    transform: translateY(-4px);
-}
-
-.back-to-top svg {
-    width: 20px;
-    height: 20px;
-    fill: var(--text-primary);
-}
-
-/* ========================================
-   Navigation Overrides for Beautiful Jekyll
-   ======================================== */
-
-/* Header/Navbar styling */
-.navbar {
-    background: var(--bg-primary) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
-
-.navbar-brand {
-    font-weight: 300 !important;
-    font-size: 1.5rem !important;
-    color: var(--text-primary) !important;
-    letter-spacing: -0.02em;
-}
-
-.navbar-brand:hover {
-    color: var(--accent-color) !important;
-}
-
-.nav-link {
-    color: var(--text-primary) !important;
-    font-weight: 400 !important;
-    font-size: 1rem !important;
-    transition: color 0.3s ease !important;
-}
-
-.nav-link:hover {
-    color: var(--accent-color) !important;
-}
-
-.navbar-toggler {
-    border-color: var(--border-color) !important;
-}
-
-.navbar-toggler-icon {
-    background-image: none !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Footer styling */
-footer {
-    background: var(--bg-secondary) !important;
-    color: var(--text-secondary) !important;
-    border-top: 1px solid var(--border-color) !important;
-    margin-top: 6rem;
-    padding: 3rem 0 !important;
-}
-
-footer a {
-    color: var(--text-secondary) !important;
-    transition: color 0.3s ease;
-}
-
-footer a:hover {
-    color: var(--accent-color) !important;
-    text-decoration: none !important;
-}
-
-/* Main content area */
-.main-content {
-    min-height: calc(100vh - 200px);
-}
-
-/* Page header improvements */
-.intro-header {
-    background: transparent !important;
-    margin-bottom: 3rem;
-}
-
-.intro-header .page-heading h1,
-.intro-header .post-heading h1 {
-    color: var(--text-primary) !important;
-    font-weight: 300 !important;
-    letter-spacing: -0.03em !important;
-    font-size: 3.5rem !important;
-}
-
-.intro-header .page-heading .page-subheading,
-.intro-header .post-heading .post-subheading {
-    color: var(--text-secondary) !important;
-    font-weight: 400 !important;
-    font-size: 1.25rem !important;
-}
-
-.intro-header .post-heading .post-meta {
-    color: var(--text-secondary) !important;
-    font-size: 1rem !important;
-}
-
-/* Blog post styling */
-article {
-    color: var(--text-primary) !important;
-}
-
-article p {
-    color: var(--text-primary) !important;
-}
-
-article img {
-    border-radius: 12px;
-    margin: 2rem 0;
-    box-shadow: 0 4px 16px var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-article img:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 24px var(--shadow-md);
-}
-
-/* Blockquote styling */
-blockquote {
-    border-left: 4px solid var(--accent-color) !important;
-    background: var(--bg-secondary);
-    padding: 1.5rem 2rem !important;
-    margin: 2rem 0 !important;
-    border-radius: 0 8px 8px 0;
-    color: var(--text-primary) !important;
-}
-
-blockquote p {
-    margin-bottom: 0 !important;
-    font-style: italic;
-}
-
-/* Table styling */
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 2rem 0;
-    background: var(--bg-primary);
-}
-
-table thead {
-    background: var(--bg-secondary);
-}
-
-table th {
-    color: var(--text-primary) !important;
-    font-weight: 400;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-}
-
-table td {
-    color: var(--text-primary) !important;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-}
-
-table tr:hover {
-    background: var(--bg-secondary);
-}
-
-/* List styling improvements */
-ul, ol {
-    line-height: 1.8;
-    color: var(--text-primary);
-}
-
-li {
-    margin-bottom: 0.5rem;
-    color: var(--text-primary) !important;
-}
-
-/* Selection color */
-::selection {
-    background: var(--accent-color);
-    color: white;
-}
-
-::-moz-selection {
-    background: var(--accent-color);
-    color: white;
-}
-
-/* Focus styles for accessibility */
-button:focus,
-a:focus,
-input:focus {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
-}
-
-/* Loading animation for images */
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-    100% {
-        background-position: 1000px 0;
-    }
-}
-
-img[src]:not([src=""]) {
-    background: linear-gradient(
-        90deg,
-        var(--bg-secondary) 0px,
-        var(--bg-tertiary) 40px,
-        var(--bg-secondary) 80px
-    );
-    background-size: 1000px 100%;
-    animation: shimmer 2s infinite linear;
-}
-
-img[src]:not([src=""]).loaded {
-    animation: none;
-    background: none;
-}
-
-/* Print styles */
-@media print {
-    .theme-toggle,
-    .back-to-top,
-    .navbar,
-    footer,
-    .search-section {
-        display: none !important;
-    }
 
-    body {
-        background: white !important;
-        color: black !important;
-    }
+/* Dark Mode Toggle Button */
+#dark-mode-toggle {
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
 }

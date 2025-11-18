@@ -46,3 +46,26 @@ future: true
 # editor 폴더 포함 (Custom Editor)
 include:
   - editor
+
+# -----------------------
+# Added Features Config
+# -----------------------
+
+# Reading Time
+reading_time: true
+
+# MathJax
+mathjax: true
+
+# Mermaid
+mermaid: true
+
+# Comments (Utterances)
+# Repo must be public and have the utterances app installed
+utterances:
+  repo: "lebronisbest/lebronisbest.github.io" # User needs to verify this
+  issue-term: "pathname"
+  theme: "github-light"
+
+# Google Analytics
+# google_analytics: "UA-XXXXX-Y" # Placeholder

@@ -7,3 +7,17 @@
 <!-- SEO 최적화 -->
 {% include seo.html %}
 
+<!-- MathJax -->
+{% if site.mathjax %}
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+{% endif %}
+
+<!-- Mermaid -->
+{% if site.mermaid %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+{% endif %}
+
