@@ -48,7 +48,7 @@ const callbackUrl = document.getElementById('callbackUrl');
 let oauthClientId = null;
 
 // 초기화
-document.addEventListener('DOMContentLoaded', () => {
+function initializeEditor() {
     // 저장된 토큰 확인
     const savedToken = localStorage.getItem('github_token');
     if (savedToken) {
@@ -75,14 +75,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 이벤트 리스너 설정
     setupEventListeners();
-    setupQuillEditor();
     setupImageUpload();
     setupOAuth();
+    
+    // Quill이 로드될 때까지 기다린 후 초기화
+    if (typeof Quill !== 'undefined') {
+        setupQuillEditor();
+    } else {
+        // Quill 스크립트가 로드될 때까지 대기
+        const checkQuill = setInterval(() => {
+            if (typeof Quill !== 'undefined') {
+                clearInterval(checkQuill);
+                setupQuillEditor();
+            }
+        }, 100);
+        
+        // 5초 후 타임아웃
+        setTimeout(() => {
+            clearInterval(checkQuill);
+            if (typeof Quill === 'undefined') {
+                console.error('Quill을 로드할 수 없습니다.');
+            }
+        }, 5000);
+    }
     
     // 오늘 날짜로 기본 설정
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
-});
+}
+
+// DOM이 준비되면 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeEditor);
+} else {
+    // DOM이 이미 로드된 경우
+    initializeEditor();
+}
 
 // OAuth 설정
 function setupOAuth() {
@@ -313,16 +341,7 @@ function setupEventListeners() {
         }
     });
     
-    // Quill 에디터 변경 시
-    if (quill) {
-        quill.on('text-change', () => {
-            if (currentPost) {
-                currentPost.hasChanges = true;
-            }
-            // HTML을 마크다운으로 변환하여 저장
-            convertHtmlToMarkdown();
-        });
-    }
+    // Quill 에디터 변경 이벤트는 setupQuillEditor에서 설정
     
     // 메타데이터 변경 시 자동 저장 표시
     [titleInput, subtitleInput, dateInput, tagsInput].forEach(input => {
@@ -371,6 +390,15 @@ function setupQuillEditor() {
                 }
             }
         }
+    });
+    
+    // 텍스트 변경 이벤트 리스너
+    quill.on('text-change', () => {
+        if (currentPost) {
+            currentPost.hasChanges = true;
+        }
+        // HTML을 마크다운으로 변환하여 저장
+        convertHtmlToMarkdown();
     });
     
     // 한국어 툴바 텍스트
@@ -433,14 +461,29 @@ function convertHtmlToMarkdown() {
 
 // 마크다운을 HTML로 변환하여 Quill에 로드
 function convertMarkdownToHtml(markdown) {
-    if (!quill || typeof marked === 'undefined') return;
+    if (!quill || !quill.root || typeof marked === 'undefined') {
+        console.warn('Quill이 아직 초기화되지 않았습니다.');
+        // Quill이 초기화될 때까지 기다렸다가 다시 시도
+        setTimeout(() => {
+            if (quill && quill.root) {
+                convertMarkdownToHtml(markdown);
+            }
+        }, 100);
+        return;
+    }
     
     try {
         const html = marked.parse(markdown);
-        quill.root.innerHTML = html;
+        if (quill.root) {
+            quill.root.innerHTML = html;
+        } else {
+            quill.setText(markdown);
+        }
     } catch (error) {
         console.error('HTML 변환 실패:', error);
-        quill.setText(markdown);
+        if (quill) {
+            quill.setText(markdown);
+        }
     }
 }
 
