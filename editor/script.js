@@ -79,24 +79,45 @@ function initializeEditor() {
     setupOAuth();
     
     // Quill이 로드될 때까지 기다린 후 초기화
-    if (typeof Quill !== 'undefined') {
-        setupQuillEditor();
+    // 웨일 브라우저 호환성을 위해 더 긴 대기 시간과 재시도 로직 추가
+    function initQuillWithRetry() {
+        if (typeof Quill !== 'undefined' && document.getElementById('quillEditor')) {
+            try {
+                setupQuillEditor();
+                return true;
+            } catch (error) {
+                console.error('Quill 초기화 실패:', error);
+                return false;
+            }
+        }
+        return false;
+    }
+    
+    if (initQuillWithRetry()) {
+        console.log('Quill 초기화 완료');
     } else {
         // Quill 스크립트가 로드될 때까지 대기
+        let attempts = 0;
+        const maxAttempts = 50; // 웨일 브라우저를 위해 더 긴 대기 시간
         const checkQuill = setInterval(() => {
-            if (typeof Quill !== 'undefined') {
+            attempts++;
+            if (initQuillWithRetry()) {
                 clearInterval(checkQuill);
-                setupQuillEditor();
+                console.log('Quill 초기화 완료 (재시도 후)');
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkQuill);
+                console.error('Quill을 로드할 수 없습니다. 브라우저를 확인해주세요.');
+                if (window.isWhale) {
+                    alert('웨일 브라우저에서 Quill 에디터를 로드할 수 없습니다.\n\n' +
+                          '해결 방법:\n' +
+                          '1. 페이지를 새로고침해주세요 (F5)\n' +
+                          '2. 브라우저 캐시를 삭제해주세요\n' +
+                          '3. 다른 브라우저(Chrome, Edge)에서 시도해보세요');
+                } else {
+                    alert('에디터를 초기화할 수 없습니다. 페이지를 새로고침해주세요.');
+                }
             }
         }, 100);
-        
-        // 5초 후 타임아웃
-        setTimeout(() => {
-            clearInterval(checkQuill);
-            if (typeof Quill === 'undefined') {
-                console.error('Quill을 로드할 수 없습니다.');
-            }
-        }, 5000);
     }
     
     // 오늘 날짜로 기본 설정
@@ -361,15 +382,27 @@ function setupEventListeners() {
 
 // Quill 에디터 설정
 function setupQuillEditor() {
-    if (!quillEditorContainer || typeof Quill === 'undefined') {
-        console.error('Quill이 로드되지 않았습니다.');
+    if (!quillEditorContainer) {
+        console.error('Quill 에디터 컨테이너를 찾을 수 없습니다.');
         return;
     }
     
-    // 이미지 핸들러 추가
-    const ImageBlot = Quill.import('formats/image');
+    if (typeof Quill === 'undefined') {
+        console.error('Quill 라이브러리가 로드되지 않았습니다.');
+        return;
+    }
     
-    quill = new Quill('#quillEditor', {
+    // 이미 에디터가 초기화되어 있으면 재초기화 방지
+    if (quill) {
+        console.warn('Quill이 이미 초기화되어 있습니다.');
+        return;
+    }
+    
+    try {
+        // 이미지 핸들러 추가
+        const ImageBlot = Quill.import('formats/image');
+        
+        quill = new Quill('#quillEditor', {
         theme: 'snow',
         placeholder: '여기에 글을 작성하세요...',
         modules: {
@@ -416,6 +449,12 @@ function setupQuillEditor() {
             'code-block': '코드',
             'clean': '서식 제거'
         };
+    }
+    
+    console.log('Quill 에디터 설정 완료');
+    } catch (error) {
+        console.error('Quill 에디터 설정 중 오류 발생:', error);
+        alert('에디터를 초기화하는 중 오류가 발생했습니다: ' + error.message);
     }
 }
 
