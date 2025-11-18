@@ -225,7 +225,7 @@ body {
 
 /* 커스텀 스크롤바 - 포스트 목록 */
 .posts-list::-webkit-scrollbar {
-    width: 12px;
+    width: 16px;
 }
 
 .posts-list::-webkit-scrollbar-track {
@@ -235,9 +235,10 @@ body {
 
 .posts-list::-webkit-scrollbar-thumb {
     background: var(--text-tertiary);
-    border-radius: 6px;
-    border: 2px solid var(--bg-primary);
+    border-radius: 8px;
+    border: 3px solid var(--bg-primary);
     transition: background 0.2s ease;
+    min-height: 50px; /* 스크롤바 최소 높이 */
 }
 
 .posts-list::-webkit-scrollbar-thumb:hover {
@@ -246,7 +247,7 @@ body {
 
 /* Firefox 스크롤바 - 포스트 목록 */
 .posts-list {
-    scrollbar-width: thin;
+    scrollbar-width: auto;
     scrollbar-color: var(--text-tertiary) var(--bg-primary);
 }
 
@@ -295,7 +296,7 @@ body {
 
 /* 커스텀 스크롤바 - 메인 에디터 */
 .main-editor::-webkit-scrollbar {
-    width: 12px;
+    width: 16px;
 }
 
 .main-editor::-webkit-scrollbar-track {
@@ -305,9 +306,10 @@ body {
 
 .main-editor::-webkit-scrollbar-thumb {
     background: var(--text-tertiary);
-    border-radius: 6px;
-    border: 2px solid var(--bg-secondary);
+    border-radius: 8px;
+    border: 3px solid var(--bg-secondary);
     transition: background 0.2s ease;
+    min-height: 50px; /* 스크롤바 최소 높이 */
 }
 
 .main-editor::-webkit-scrollbar-thumb:hover {
@@ -316,7 +318,7 @@ body {
 
 /* Firefox 스크롤바 - 메인 에디터 */
 .main-editor {
-    scrollbar-width: thin;
+    scrollbar-width: auto;
     scrollbar-color: var(--text-tertiary) var(--bg-secondary);
 }
 
