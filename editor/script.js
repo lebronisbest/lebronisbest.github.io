@@ -1131,13 +1131,14 @@ async function savePost(isPublish) {
         if (!currentPost) {
             currentPost = {
                 name: fileName,
-                path: path,
+                path: targetPath, // 실제 저장된 경로 사용
                 sha: result.content.sha,
                 download_url: result.content.download_url,
                 hasChanges: false,
             };
-            // 포스트 목록 새로고침 (에디터 내용은 유지)
-            await loadPosts();
+            // 포스트 목록만 새로고침 (에디터 내용은 유지)
+            // loadPosts는 비동기로 실행하여 에디터에 영향 없도록
+            loadPosts().catch(err => console.error('포스트 목록 새로고침 실패:', err));
         } else {
             currentPost.sha = result.content.sha;
             currentPost.path = targetPath; // 경로 업데이트
