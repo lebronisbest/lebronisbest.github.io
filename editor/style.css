@@ -290,7 +290,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    -webkit-overflow-scrolling: touch;
+    position: relative;
 }
 
 /* 커스텀 스크롤바 - 메인 에디터 */
@@ -421,6 +421,8 @@ body {
     overflow: hidden;
     position: relative;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .tab-content {
