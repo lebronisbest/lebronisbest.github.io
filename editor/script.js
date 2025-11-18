@@ -493,7 +493,16 @@ function convertHtmlToMarkdown() {
             codeBlockStyle: 'fenced',
             bulletListMarker: '-',
             emDelimiter: '*',
-            strongDelimiter: '**'
+            strongDelimiter: '**',
+            br: '\n'  // <br> 태그를 줄바꿈으로 변환
+        });
+        
+        // 줄바꿈 보존 규칙 추가
+        turndownService.addRule('lineBreak', {
+            filter: 'br',
+            replacement: function() {
+                return '\n';
+            }
         });
         
         // 이미지 처리
@@ -541,9 +550,12 @@ function convertMarkdownToHtml(markdown) {
         console.log('마크다운을 HTML로 변환 중...', markdown.substring(0, 100));
         
         // marked 옵션 설정 (더 나은 HTML 출력)
+        // breaks: true 옵션으로 단순 줄바꿈도 <br>로 변환
         const html = marked.parse(markdown, {
-            breaks: true,  // 줄바꿈을 <br>로 변환
-            gfm: true     // GitHub Flavored Markdown 지원
+            breaks: true,  // 줄바꿈을 <br>로 변환 (단순 줄바꿈도 처리)
+            gfm: true,    // GitHub Flavored Markdown 지원
+            headerIds: false,  // 헤더 ID 자동 생성 비활성화
+            mangle: false      // 이메일 주소 난독화 비활성화
         });
         
         console.log('변환된 HTML:', html.substring(0, 200));
@@ -848,6 +860,11 @@ async function handleAuth() {
 function showEditor() {
     authSection.style.display = 'none';
     editorSection.style.display = 'flex';
+    
+    // Quill이 아직 초기화되지 않았다면 초기화 시도
+    if (!quill && typeof Quill !== 'undefined' && document.getElementById('quillEditor')) {
+        setupQuillEditor();
+    }
 }
 
 // 포스트 목록 로드
