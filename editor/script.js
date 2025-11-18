@@ -885,8 +885,9 @@ function handleNewPost() {
 
 // 저장
 async function handleSave() {
-    if (!currentPost) {
-        alert('먼저 포스트를 선택하거나 새 포스트를 만드세요.');
+    if (!titleInput.value.trim()) {
+        alert('제목을 입력해주세요.');
+        titleInput.focus();
         return;
     }
     
@@ -959,16 +960,15 @@ async function savePost(isPublish) {
         
         // GitHub API 요청
         const method = currentPost && currentPost.sha ? 'PUT' : 'POST';
-        const url = method === 'PUT' 
-            ? `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${currentPost.path}`
-            : `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+        const targetPath = currentPost && currentPost.path ? currentPost.path : path;
+        const url = `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`;
         
         const body = {
             message: isPublish ? `포스트 발행: ${titleInput.value}` : `포스트 저장: ${titleInput.value}`,
             content: base64Content,
         };
         
-        if (method === 'PUT') {
+        if (method === 'PUT' && currentPost && currentPost.sha) {
             body.sha = currentPost.sha;
         }
         
