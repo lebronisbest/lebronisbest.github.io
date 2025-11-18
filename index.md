@@ -4,9 +4,13 @@ title: 홈
 subtitle: 개발과 일상을 기록하는 블로그
 ---
 
-<div class="hero-section">
+<div class="hero-section fade-in">
   <h1 class="hero-title">안녕하세요</h1>
   <p class="hero-description">개발과 일상을 기록하는 블로그입니다.</p>
+  <p class="hero-description" style="font-size: 1.125rem; margin-top: 2rem;">
+    <a href="{{ '/posts' | relative_url }}" class="button">모든 포스트 보기</a>
+    <a href="{{ '/about' | relative_url }}" class="button-secondary" style="margin-left: 1rem;">더 알아보기</a>
+  </p>
 </div>
 
 <div class="posts-section">
