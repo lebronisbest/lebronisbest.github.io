@@ -528,8 +528,14 @@ function convertHtmlToMarkdown() {
 
 // 마크다운을 HTML로 변환하여 Quill에 로드
 function convertMarkdownToHtml(markdown) {
+    // 에디터 섹션이 항상 표시되도록 보장
+    if (editorSection) {
+        editorSection.style.display = 'flex';
+    }
+    
     if (!quill) {
         console.warn('Quill이 아직 초기화되지 않았습니다.');
+        // Quill이 없어도 에디터 섹션은 유지
         return;
     }
     
@@ -622,6 +628,10 @@ function convertMarkdownToHtml(markdown) {
     } catch (error) {
         console.error('HTML 변환 실패:', error);
         // 에러 발생 시 텍스트로 설정
+        // 에디터 섹션이 항상 표시되도록 보장
+        if (editorSection) {
+            editorSection.style.display = 'flex';
+        }
         if (quill) {
             try {
                 console.log('에러 발생, 텍스트로 설정합니다.');
@@ -929,6 +939,11 @@ function renderPostsList() {
 
 // 포스트 로드
 async function loadPost(post) {
+    // 에디터 섹션이 항상 표시되도록 보장
+    if (editorSection) {
+        editorSection.style.display = 'flex';
+    }
+    
     try {
         const response = await fetch(post.download_url);
         if (!response.ok) {
@@ -954,6 +969,10 @@ async function loadPost(post) {
         // Quill이 준비될 때까지 기다린 후 콘텐츠 로드
         if (!quill) {
             console.warn('Quill이 아직 초기화되지 않았습니다. 대기 중...');
+            // Quill 초기화 시도
+            if (typeof Quill !== 'undefined' && document.getElementById('quillEditor')) {
+                setupQuillEditor();
+            }
             // 최대 3초 대기
             let attempts = 0;
             const maxAttempts = 30;
@@ -965,7 +984,8 @@ async function loadPost(post) {
                 } else if (attempts >= maxAttempts) {
                     clearInterval(checkQuill);
                     console.error('Quill 초기화 타임아웃');
-                    alert('에디터를 초기화할 수 없습니다. 페이지를 새로고침해주세요.');
+                    // 에러가 발생해도 에디터 섹션은 유지
+                    showMessage('에디터를 초기화할 수 없습니다. 페이지를 새로고침해주세요.', 'error');
                 }
             }, 100);
         } else {
@@ -983,7 +1003,8 @@ async function loadPost(post) {
         
     } catch (error) {
         console.error('포스트 로드 실패:', error);
-        alert('포스트를 불러오는데 실패했습니다: ' + error.message);
+        // 에러가 발생해도 에디터 섹션은 유지
+        showMessage('포스트를 불러오는데 실패했습니다: ' + error.message, 'error');
     }
 }
 
@@ -1324,12 +1345,23 @@ async function savePost(isPublish) {
 function showMessage(message, type = 'info') {
     // 간단한 토스트 메시지 (추후 개선 가능)
     const toast = document.createElement('div');
+    
+    // 타입에 따른 배경색 설정
+    let backgroundColor;
+    if (type === 'success') {
+        backgroundColor = 'var(--success)';
+    } else if (type === 'error') {
+        backgroundColor = '#e74c3c'; // 빨간색
+    } else {
+        backgroundColor = 'var(--accent-color)';
+    }
+    
     toast.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
         padding: 1rem 1.5rem;
-        background: ${type === 'success' ? 'var(--success)' : 'var(--accent-color)'};
+        background: ${backgroundColor};
         color: white;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
