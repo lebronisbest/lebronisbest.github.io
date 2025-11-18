@@ -959,8 +959,25 @@ async function savePost(isPublish) {
         // HTML을 마크다운으로 변환
         convertHtmlToMarkdown();
         
+        // 변환된 마크다운 확인
+        const markdownContent = markdownEditor.value || '';
+        if (!markdownContent.trim() && quill && quill.root) {
+            // 마크다운 변환이 실패했으면 HTML을 그대로 사용
+            const htmlContent = quill.root.innerHTML;
+            console.warn('마크다운 변환 실패, HTML 사용:', htmlContent);
+        }
+        
         // 전체 마크다운 생성
-        const content = `---\n${frontMatterText}\n---\n\n${markdownEditor.value}`;
+        const content = `---\n${frontMatterText}\n---\n\n${markdownContent}`;
+        
+        // 디버깅: 저장할 내용 확인
+        console.log('저장할 내용:', {
+            fileName,
+            path,
+            contentLength: content.length,
+            markdownLength: markdownContent.length,
+            frontMatter: frontMatterText
+        });
         
         // 파일명 생성
         const date = dateInput.value;
@@ -1112,13 +1129,26 @@ async function savePost(isPublish) {
                 download_url: result.content.download_url,
                 hasChanges: false,
             };
+            // 포스트 목록 새로고침 (에디터 내용은 유지)
             await loadPosts();
         } else {
             currentPost.sha = result.content.sha;
+            currentPost.path = targetPath; // 경로 업데이트
             currentPost.hasChanges = false;
         }
         
-        showMessage(isPublish ? '포스트가 발행되었습니다!' : '포스트가 저장되었습니다!', 'success');
+        // 저장 성공 메시지
+        const message = isPublish 
+            ? `포스트가 발행되었습니다! (파일: ${fileName})` 
+            : `포스트가 저장되었습니다! (파일: ${fileName})`;
+        showMessage(message, 'success');
+        
+        console.log('저장 성공:', {
+            fileName,
+            path: targetPath,
+            sha: result.content.sha,
+            downloadUrl: result.content.download_url
+        });
         
     } catch (error) {
         console.error('저장 실패:', error);
