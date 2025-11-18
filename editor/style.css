@@ -22,12 +22,19 @@
     --shadow-md: rgba(0, 0, 0, 0.15);
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "Noto Sans KR", sans-serif;
     background: var(--bg-secondary);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
 }
 
 /* Container */
@@ -180,6 +187,7 @@ body {
     flex: 1;
     display: flex;
     overflow: hidden;
+    min-height: 0;
     height: 100%;
 }
 
@@ -191,6 +199,8 @@ body {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    height: 100%;
 }
 
 .sidebar-header {
@@ -280,7 +290,8 @@ body {
     background: var(--bg-primary);
     overflow-y: scroll;
     overflow-x: hidden;
-    max-height: 100%;
+    min-height: 0;
+    height: 100%;
 }
 
 /* 커스텀 스크롤바 - 메인 에디터 */
@@ -410,6 +421,7 @@ body {
     flex: 1;
     overflow: hidden;
     position: relative;
+    min-height: 0;
 }
 
 .tab-content {
@@ -466,6 +478,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-height: 0;
 }
 
 .ql-editor {
