@@ -292,6 +292,7 @@ body {
     overflow-x: hidden;
     min-height: 0;
     position: relative;
+    height: 100%;
 }
 
 /* 커스텀 스크롤바 - 메인 에디터 */
@@ -425,6 +426,7 @@ body {
     min-height: 0;
     display: flex;
     flex-direction: column;
+    padding-bottom: 50vh; /* 하단 여백 추가 - 스크롤이 더 아래로 내려가도록 */
 }
 
 .tab-content {
