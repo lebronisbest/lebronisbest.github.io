@@ -500,7 +500,13 @@ function convertMarkdownToHtml(markdown) {
         }
         
         console.log('마크다운을 HTML로 변환 중...', markdown.substring(0, 100));
-        const html = marked.parse(markdown);
+        
+        // marked 옵션 설정 (더 나은 HTML 출력)
+        const html = marked.parse(markdown, {
+            breaks: true,  // 줄바꿈을 <br>로 변환
+            gfm: true     // GitHub Flavored Markdown 지원
+        });
+        
         console.log('변환된 HTML:', html.substring(0, 200));
         
         // Quill의 Delta API를 사용하여 안전하게 콘텐츠 설정
@@ -508,22 +514,55 @@ function convertMarkdownToHtml(markdown) {
             // 기존 콘텐츠를 지우고 새 콘텐츠 삽입
             quill.setContents([]);
             
-            // HTML을 Delta로 변환
-            const delta = quill.clipboard.convert({ html: html });
-            console.log('Delta 변환 완료:', delta);
-            
-            // 콘텐츠 설정 (silent 모드로 이벤트 발생 안 함)
-            quill.setContents(delta, 'silent');
-            
-            // 변환 후 확인
-            setTimeout(() => {
-                const editorContent = quill.root.innerHTML;
-                console.log('에디터에 로드된 내용:', editorContent.substring(0, 200));
-                if (!editorContent || editorContent.trim() === '' || editorContent.trim() === '<p><br></p>') {
-                    console.warn('에디터가 비어있습니다. 텍스트로 재시도합니다.');
+            try {
+                // 방법 1: clipboard.convert 사용
+                const delta = quill.clipboard.convert(html);
+                console.log('Delta 변환 완료:', delta);
+                
+                if (delta && delta.ops && delta.ops.length > 0) {
+                    // 콘텐츠 설정 (silent 모드로 이벤트 발생 안 함)
+                    quill.setContents(delta, 'silent');
+                } else {
+                    throw new Error('Delta 변환 결과가 비어있습니다.');
+                }
+            } catch (deltaError) {
+                console.warn('Delta 변환 실패, 직접 HTML 삽입 시도:', deltaError);
+                // 방법 2: 직접 HTML 삽입
+                try {
+                    // 임시 div에 HTML 삽입
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Quill의 pasteHTML 사용
+                    quill.clipboard.dangerouslyPasteHTML(0, html, 'silent');
+                } catch (htmlError) {
+                    console.warn('HTML 삽입 실패, 텍스트로 설정:', htmlError);
+                    // 방법 3: 텍스트로 설정
                     quill.setText(markdown);
                 }
-            }, 100);
+            }
+            
+            // 변환 후 확인 (더 긴 대기 시간)
+            setTimeout(() => {
+                const editorContent = quill.root.innerHTML;
+                const editorText = quill.getText();
+                console.log('에디터에 로드된 내용 (HTML):', editorContent.substring(0, 200));
+                console.log('에디터에 로드된 내용 (Text):', editorText.substring(0, 100));
+                
+                // 에디터가 비어있는지 확인
+                const isEmpty = !editorContent || 
+                               editorContent.trim() === '' || 
+                               editorContent.trim() === '<p><br></p>' ||
+                               editorContent.trim() === '<p></p>' ||
+                               (!editorText || editorText.trim() === '');
+                
+                if (isEmpty) {
+                    console.warn('에디터가 비어있습니다. 텍스트로 재시도합니다.');
+                    quill.setText(markdown);
+                } else {
+                    console.log('콘텐츠가 성공적으로 로드되었습니다.');
+                }
+            }, 200);
         } else {
             // quill.root가 없으면 텍스트로 설정
             console.warn('quill.root가 없습니다. 텍스트로 설정합니다.');
