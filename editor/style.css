@@ -179,7 +179,34 @@ body {
 .editor-section {
     flex: 1;
     display: flex;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* 커스텀 스크롤바 - 에디터 섹션 */
+.editor-section::-webkit-scrollbar {
+    width: 12px;
+}
+
+.editor-section::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+.editor-section::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 6px;
+    border: 2px solid var(--bg-secondary);
+    transition: background 0.2s ease;
+}
+
+.editor-section::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Firefox 스크롤바 - 에디터 섹션 */
+.editor-section {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-tertiary) var(--bg-secondary);
 }
 
 /* Sidebar */
@@ -207,7 +234,35 @@ body {
 .posts-list {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 0.5rem;
+}
+
+/* 커스텀 스크롤바 - 포스트 목록 */
+.posts-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.posts-list::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border-color);
+}
+
+.posts-list::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 6px;
+    border: 2px solid var(--bg-primary);
+    transition: background 0.2s ease;
+}
+
+.posts-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Firefox 스크롤바 - 포스트 목록 */
+.posts-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-tertiary) var(--bg-primary);
 }
 
 .post-item {
@@ -247,7 +302,35 @@ body {
     display: flex;
     flex-direction: column;
     background: var(--bg-primary);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* 커스텀 스크롤바 - 메인 에디터 */
+.main-editor::-webkit-scrollbar {
+    width: 12px;
+}
+
+.main-editor::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+}
+
+.main-editor::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 6px;
+    border: 2px solid var(--bg-secondary);
+    transition: background 0.2s ease;
+}
+
+.main-editor::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Firefox 스크롤바 - 메인 에디터 */
+.main-editor {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-tertiary) var(--bg-secondary);
 }
 
 /* Metadata */
@@ -523,9 +606,36 @@ body {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
+    overflow-x: hidden;
     max-width: 700px;
     margin: 0 auto;
     width: 100%;
+}
+
+/* 커스텀 스크롤바 - 프리뷰 */
+.preview-content::-webkit-scrollbar {
+    width: 12px;
+}
+
+.preview-content::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+.preview-content::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 6px;
+    border: 2px solid var(--bg-secondary);
+    transition: background 0.2s ease;
+}
+
+.preview-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Firefox 스크롤바 - 프리뷰 */
+.preview-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-tertiary) var(--bg-secondary);
 }
 
 .preview-content h1,
