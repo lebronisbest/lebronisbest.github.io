@@ -1105,15 +1105,6 @@ async function savePost(isPublish) {
         // 전체 마크다운 생성
         const content = `---\n${frontMatterText}\n---\n\n${markdownContent}`;
         
-        // 디버깅: 저장할 내용 확인
-        console.log('저장할 내용:', {
-            fileName,
-            path,
-            contentLength: content.length,
-            markdownLength: markdownContent.length,
-            frontMatter: frontMatterText
-        });
-        
         // 파일명 생성
         const date = dateInput.value;
         let titleSlug = titleInput.value.trim();
@@ -1138,6 +1129,15 @@ async function savePost(isPublish) {
         if (!/^\d{4}-\d{2}-\d{2}-.+\.md$/.test(fileName)) {
             console.warn('파일명 형식이 올바르지 않습니다:', fileName);
         }
+        
+        // 디버깅: 저장할 내용 확인
+        console.log('저장할 내용:', {
+            fileName,
+            path,
+            contentLength: content.length,
+            markdownLength: markdownContent.length,
+            frontMatter: frontMatterText
+        });
         
         // Base64 인코딩 (UTF-8)
         const base64Content = btoa(unescape(encodeURIComponent(content)));
