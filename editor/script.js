@@ -24,8 +24,8 @@ const subtitleInput = document.getElementById('subtitleInput');
 const dateInput = document.getElementById('dateInput');
 const tagsInput = document.getElementById('tagsInput');
 const markdownEditor = document.getElementById('markdownEditor');
-const richEditor = document.getElementById('richEditor');
-const preview = document.getElementById('preview');
+const quillEditorContainer = document.getElementById('quillEditor');
+let quill = null;
 const imageModal = document.getElementById('imageModal');
 const imageInput = document.getElementById('imageInput');
 const uploadArea = document.getElementById('uploadArea');
@@ -75,8 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 이벤트 리스너 설정
     setupEventListeners();
-    setupRichEditor();
-    setupToolbar();
+    setupQuillEditor();
     setupImageUpload();
     setupOAuth();
     
@@ -314,17 +313,15 @@ function setupEventListeners() {
         }
     });
     
-    // 리치 에디터 변경 시
-    if (richEditor) {
-        richEditor.addEventListener('input', () => {
+    // Quill 에디터 변경 시
+    if (quill) {
+        quill.on('text-change', () => {
             if (currentPost) {
                 currentPost.hasChanges = true;
             }
             // HTML을 마크다운으로 변환하여 저장
             convertHtmlToMarkdown();
         });
-        
-        richEditor.addEventListener('paste', handlePaste);
     }
     
     // 메타데이터 변경 시 자동 저장 표시
@@ -343,108 +340,69 @@ function setupEventListeners() {
     });
 }
 
-// 리치 에디터 설정
-function setupRichEditor() {
-    if (!richEditor) return;
+// Quill 에디터 설정
+function setupQuillEditor() {
+    if (!quillEditorContainer || typeof Quill === 'undefined') {
+        console.error('Quill이 로드되지 않았습니다.');
+        return;
+    }
     
-    // 키보드 단축키
-    richEditor.addEventListener('keydown', (e) => {
-        // Ctrl+B: 굵게
-        if (e.ctrlKey && e.key === 'b') {
-            e.preventDefault();
-            document.execCommand('bold', false, null);
-        }
-        // Ctrl+I: 기울임
-        if (e.ctrlKey && e.key === 'i') {
-            e.preventDefault();
-            document.execCommand('italic', false, null);
-        }
-        // Ctrl+U: 밑줄
-        if (e.ctrlKey && e.key === 'u') {
-            e.preventDefault();
-            document.execCommand('underline', false, null);
-        }
-        // Ctrl+K: 링크
-        if (e.ctrlKey && e.key === 'k') {
-            e.preventDefault();
-            insertLink();
-        }
-        // Enter 시 <p> 태그 유지
-        if (e.key === 'Enter' && !e.shiftKey) {
-            setTimeout(() => {
-                const selection = window.getSelection();
-                if (selection.rangeCount > 0) {
-                    const range = selection.getRangeAt(0);
-                    const p = document.createElement('p');
-                    p.innerHTML = '<br>';
-                    range.insertNode(p);
-                    range.setStartAfter(p);
-                    range.collapse(true);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
+    // 이미지 핸들러 추가
+    const ImageBlot = Quill.import('formats/image');
+    
+    quill = new Quill('#quillEditor', {
+        theme: 'snow',
+        placeholder: '여기에 글을 작성하세요...',
+        modules: {
+            toolbar: {
+                container: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'image'],
+                    ['blockquote', 'code-block'],
+                    ['clean']
+                ],
+                handlers: {
+                    'image': function() {
+                        showImageModal();
+                    }
                 }
-            }, 0);
+            }
         }
     });
     
-    // 포커스 시 빈 상태면 <p> 태그 추가
-    richEditor.addEventListener('focus', () => {
-        if (richEditor.innerHTML.trim() === '' || richEditor.innerHTML === '<br>') {
-            richEditor.innerHTML = '<p><br></p>';
-        }
-    });
-}
-
-// 툴바 설정
-function setupToolbar() {
-    const toolBtns = document.querySelectorAll('.tool-btn');
-    toolBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const command = btn.dataset.command;
-            const value = btn.dataset.value;
-            const action = btn.dataset.action;
-            
-            if (action === 'image') {
-                showImageModal();
-            } else if (command === 'createLink') {
-                insertLink();
-            } else if (command) {
-                document.execCommand(command, false, value || null);
-                richEditor.focus();
-            }
-        });
-    });
+    // 한국어 툴바 텍스트
+    const toolbar = quill.getModule('toolbar');
+    if (toolbar) {
+        // 툴바 버튼에 한국어 툴팁 추가
+        const tooltips = {
+            'bold': '굵게',
+            'italic': '기울임',
+            'underline': '밑줄',
+            'strike': '취소선',
+            'link': '링크',
+            'image': '이미지',
+            'blockquote': '인용',
+            'code-block': '코드',
+            'clean': '서식 제거'
+        };
+    }
 }
 
 // HTML을 마크다운으로 변환
 function convertHtmlToMarkdown() {
-    if (!richEditor) return;
+    if (!quill) return;
     
     try {
+        // Quill의 Delta를 HTML로 변환
+        const html = quill.root.innerHTML;
+        
         // TurndownService가 로드되었는지 확인
         if (typeof TurndownService === 'undefined') {
-            console.warn('TurndownService가 로드되지 않았습니다. 간단한 변환을 사용합니다.');
-            // 간단한 변환
-            let html = richEditor.innerHTML;
-            html = html.replace(/<strong>(.*?)<\/strong>/gi, '**$1**');
-            html = html.replace(/<b>(.*?)<\/b>/gi, '**$1**');
-            html = html.replace(/<em>(.*?)<\/em>/gi, '*$1*');
-            html = html.replace(/<i>(.*?)<\/i>/gi, '*$1*');
-            html = html.replace(/<u>(.*?)<\/u>/gi, '<u>$1</u>');
-            html = html.replace(/<h2>(.*?)<\/h2>/gi, '## $1\n\n');
-            html = html.replace(/<h3>(.*?)<\/h3>/gi, '### $1\n\n');
-            html = html.replace(/<h4>(.*?)<\/h4>/gi, '#### $1\n\n');
-            html = html.replace(/<p>(.*?)<\/p>/gi, '$1\n\n');
-            html = html.replace(/<br\s*\/?>/gi, '\n');
-            html = html.replace(/<ul>(.*?)<\/ul>/gis, '$1');
-            html = html.replace(/<ol>(.*?)<\/ol>/gis, '$1');
-            html = html.replace(/<li>(.*?)<\/li>/gi, '- $1\n');
-            html = html.replace(/<a href="(.*?)">(.*?)<\/a>/gi, '[$2]($1)');
-            html = html.replace(/<img[^>]*src="(.*?)"[^>]*alt="(.*?)"[^>]*>/gi, '![$2]($1)');
-            html = html.replace(/<img[^>]*src="(.*?)"[^>]*>/gi, '![]($1)');
-            html = html.replace(/<[^>]+>/g, '');
-            markdownEditor.value = html.trim();
+            console.warn('TurndownService가 로드되지 않았습니다.');
+            markdownEditor.value = html;
             return;
         }
         
@@ -466,7 +424,6 @@ function convertHtmlToMarkdown() {
             }
         });
         
-        const html = richEditor.innerHTML;
         const markdown = turndownService.turndown(html);
         markdownEditor.value = markdown;
     } catch (error) {
@@ -474,57 +431,16 @@ function convertHtmlToMarkdown() {
     }
 }
 
-// 마크다운을 HTML로 변환
+// 마크다운을 HTML로 변환하여 Quill에 로드
 function convertMarkdownToHtml(markdown) {
-    if (!richEditor || typeof marked === 'undefined') return;
+    if (!quill || typeof marked === 'undefined') return;
     
     try {
         const html = marked.parse(markdown);
-        richEditor.innerHTML = html;
+        quill.root.innerHTML = html;
     } catch (error) {
         console.error('HTML 변환 실패:', error);
-        richEditor.innerHTML = markdown.replace(/\n/g, '<br>');
-    }
-}
-
-// 붙여넣기 처리
-function handlePaste(e) {
-    e.preventDefault();
-    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-    const html = (e.clipboardData || window.clipboardData).getData('text/html');
-    
-    if (html) {
-        // HTML이 있으면 정리하여 삽입
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        
-        // 스타일 제거
-        const cleanHtml = tempDiv.innerText || tempDiv.textContent || '';
-        document.execCommand('insertText', false, cleanHtml);
-    } else {
-        // 텍스트만 있으면 그대로 삽입
-        document.execCommand('insertText', false, text);
-    }
-}
-
-// 링크 삽입
-function insertLink() {
-    const url = prompt('링크 URL을 입력하세요:', 'https://');
-    if (url) {
-        const linkText = window.getSelection().toString() || '링크 텍스트';
-        document.execCommand('createLink', false, url);
-        
-        // 링크 텍스트 설정
-        setTimeout(() => {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const link = range.commonAncestorContainer.parentElement;
-                if (link.tagName === 'A' && linkText !== '링크 텍스트') {
-                    link.textContent = linkText;
-                }
-            }
-        }, 0);
+        quill.setText(markdown);
     }
 }
 
@@ -626,28 +542,13 @@ async function handleImageUpload() {
             throw new Error(error.message || '업로드 실패');
         }
         
-        // 리치 에디터에 이미지 삽입
-        const img = document.createElement('img');
-        img.src = `/assets/img/${fullFileName}`;
-        img.alt = fileName;
-        img.style.maxWidth = '100%';
-        img.style.height = 'auto';
-        img.style.borderRadius = '8px';
-        img.style.margin = '2rem 0';
+        // Quill 에디터에 이미지 삽입
+        const range = quill.getSelection(true);
+        const imageUrl = `/assets/img/${fullFileName}`;
+        quill.insertEmbed(range.index, 'image', imageUrl, 'user');
         
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.insertNode(img);
-            range.setStartAfter(img);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        } else {
-            richEditor.appendChild(img);
-        }
-        
-        richEditor.focus();
+        // 이미지 다음으로 커서 이동
+        quill.setSelection(range.index + 1);
         
         closeImageModal();
         showMessage('이미지가 업로드되었습니다!', 'success');
@@ -812,7 +713,7 @@ async function loadPost(post) {
         dateInput.value = frontMatter.date || new Date().toISOString().split('T')[0];
         tagsInput.value = Array.isArray(frontMatter.tags) ? frontMatter.tags.join(', ') : '';
         
-        // 마크다운을 HTML로 변환하여 리치 에디터에 표시
+        // 마크다운을 HTML로 변환하여 Quill에 표시
         markdownEditor.value = body;
         convertMarkdownToHtml(body);
         
@@ -886,8 +787,8 @@ function handleNewPost() {
     dateInput.value = new Date().toISOString().split('T')[0];
     tagsInput.value = '';
     markdownEditor.value = '';
-    if (richEditor) {
-        richEditor.innerHTML = '<p><br></p>';
+    if (quill) {
+        quill.setText('');
     }
     currentPost = null;
     
