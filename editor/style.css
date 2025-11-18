@@ -200,7 +200,6 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    height: 100%;
 }
 
 .sidebar-header {
@@ -222,7 +221,6 @@ body {
     overflow-x: hidden;
     padding: 0.5rem;
     min-height: 0;
-    height: 0; /* flex: 1과 함께 사용하여 높이 제한 */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -293,7 +291,6 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    height: 0; /* flex: 1과 함께 사용하여 높이 제한 */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -482,7 +479,6 @@ body {
     flex-direction: column;
     overflow: hidden;
     min-height: 0;
-    height: 0; /* flex: 1과 함께 사용하여 높이 제한 */
 }
 
 .ql-editor {
