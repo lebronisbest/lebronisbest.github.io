@@ -942,10 +942,16 @@ async function handlePublish() {
 async function savePost(isPublish) {
     try {
         // Front Matter 생성
+        // 날짜 형식 검증 (YYYY-MM-DD)
+        const dateValue = dateInput.value;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+            throw new Error('날짜 형식이 올바르지 않습니다. YYYY-MM-DD 형식을 사용해주세요.');
+        }
+        
         const frontMatter = {
             layout: 'post',
             title: `"${titleInput.value}"`,
-            date: dateInput.value,
+            date: dateValue,
             author: 'lebronisbest',
         };
         
@@ -990,9 +996,10 @@ async function savePost(isPublish) {
         const date = dateInput.value;
         let titleSlug = titleInput.value.trim();
         
-        // 한글과 영문, 숫자만 허용하고 공백/특수문자를 하이픈으로 변환
+        // 한글을 URL-safe하게 인코딩 (GitHub Pages 호환성)
+        // 한글은 유지하되, 특수문자만 제거하고 공백을 하이픈으로
         titleSlug = titleSlug
-            .replace(/[^\w\s가-힣]/g, '') // 특수문자 제거
+            .replace(/[^\w\s가-힣-]/g, '') // 특수문자 제거 (하이픈은 유지)
             .replace(/\s+/g, '-') // 공백을 하이픈으로
             .replace(/-+/g, '-') // 연속된 하이픈을 하나로
             .replace(/^-|-$/g, ''); // 앞뒤 하이픈 제거
@@ -1004,6 +1011,11 @@ async function savePost(isPublish) {
         
         const fileName = `${date}-${titleSlug}.md`;
         const path = `${POSTS_PATH}/${fileName}`;
+        
+        // 파일명 검증 (Jekyll 요구사항)
+        if (!/^\d{4}-\d{2}-\d{2}-.+\.md$/.test(fileName)) {
+            console.warn('파일명 형식이 올바르지 않습니다:', fileName);
+        }
         
         // Base64 인코딩 (UTF-8)
         const base64Content = btoa(unescape(encodeURIComponent(content)));
