@@ -36,3 +36,7 @@ theme-color: "#667eea"
 
 # 미래 날짜 포스트도 표시
 future: true
+
+# admin 폴더 포함 (Decap CMS)
+include:
+  - admin
