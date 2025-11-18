@@ -482,6 +482,7 @@ body {
     flex-direction: column;
     overflow: hidden;
     min-height: 0;
+    height: 0; /* flex: 1과 함께 사용하여 높이 제한 */
 }
 
 .ql-editor {
