@@ -24,7 +24,7 @@ subtitle: 모든 포스트
     {% if post.excerpt %}
     <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 40 }}</p>
     {% endif %}
-    <a href="{{ post.url | relative_url }}" class="read-more">읽기 →</a>
+    <a href="{{ post.url | relative_url }}" class="read-more">더 보기</a>
   </article>
   {% endfor %}
 </div>

@@ -5,8 +5,8 @@ subtitle: 개발과 일상을 기록하는 블로그
 ---
 
 <div class="hero-section">
-  <h1 class="hero-title">안녕하세요! 👋</h1>
-  <p class="hero-description">개발과 일상을 기록하는 블로그에 오신 것을 환영합니다.</p>
+  <h1 class="hero-title">안녕하세요</h1>
+  <p class="hero-description">개발과 일상을 기록하는 블로그입니다.</p>
 </div>
 
 <div class="posts-section">
@@ -29,9 +29,9 @@ subtitle: 개발과 일상을 기록하는 블로그
       {% endif %}
     </div>
     {% if post.excerpt %}
-    <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 25 }}</p>
+    <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
     {% endif %}
-    <a href="{{ post.url | relative_url }}" class="read-more">읽기 →</a>
+    <a href="{{ post.url | relative_url }}" class="read-more">더 보기</a>
   </article>
   {% endfor %}
 </div>
