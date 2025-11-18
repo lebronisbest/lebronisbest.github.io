@@ -597,16 +597,42 @@ async function handleImageUpload() {
         const path = `${ASSETS_IMG_PATH}/${fullFileName}`;
         const message = `이미지 업로드: ${fullFileName}`;
         
+        // 파일이 이미 존재하는지 확인
+        let existingSha = null;
+        try {
+            const checkResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+                headers: {
+                    'Authorization': `token ${githubToken}`,
+                },
+            });
+            
+            if (checkResponse.ok) {
+                const fileInfo = await checkResponse.json();
+                existingSha = fileInfo.sha;
+            }
+        } catch (checkError) {
+            // 파일이 존재하지 않으면 계속 진행 (새 파일 생성)
+            console.log('새 이미지 파일 생성');
+        }
+        
+        // 요청 body 준비
+        const body = {
+            message: message,
+            content: base64Content,
+        };
+        
+        // 기존 파일이 있으면 sha 포함
+        if (existingSha) {
+            body.sha = existingSha;
+        }
+        
         const response = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `token ${githubToken}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: message,
-                content: base64Content,
-            }),
+            body: JSON.stringify(body),
         });
         
         if (!response.ok) {
