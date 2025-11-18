@@ -1,0 +1,161 @@
+---
+layout: none
+---
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포스트 에디터</title>
+    <link rel="stylesheet" href="{{ '/editor/style.css' | relative_url }}">
+</head>
+<body>
+    <div class="editor-container">
+        <!-- Header -->
+        <header class="editor-header">
+            <div class="header-left">
+                <h1 class="editor-title">포스트 에디터</h1>
+            </div>
+            <div class="header-right">
+                <button id="saveBtn" class="btn btn-secondary">저장</button>
+                <button id="publishBtn" class="btn btn-primary">발행</button>
+            </div>
+        </header>
+
+        <!-- Auth Section -->
+        <div id="authSection" class="auth-section">
+            <div class="auth-card">
+                <h2>GitHub 인증</h2>
+                <p>포스트를 작성하려면 GitHub Personal Access Token이 필요합니다.</p>
+                <div class="form-group">
+                    <label for="tokenInput">Personal Access Token</label>
+                    <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxx">
+                    <small>
+                        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Blog%20Editor" target="_blank">
+                            토큰 생성하기
+                        </a>
+                    </small>
+                </div>
+                <button id="authBtn" class="btn btn-primary">인증하기</button>
+            </div>
+        </div>
+
+        <!-- Editor Section -->
+        <div id="editorSection" class="editor-section" style="display: none;">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>포스트 목록</h3>
+                    <button id="newPostBtn" class="btn-icon" title="새 포스트">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="postsList" class="posts-list">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </aside>
+
+            <!-- Main Editor -->
+            <main class="main-editor">
+                <!-- Metadata -->
+                <div class="metadata">
+                    <div class="form-group">
+                        <label for="titleInput">제목</label>
+                        <input type="text" id="titleInput" placeholder="포스트 제목을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="subtitleInput">부제목 (선택)</label>
+                        <input type="text" id="subtitleInput" placeholder="부제목을 입력하세요">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateInput">날짜</label>
+                            <input type="date" id="dateInput">
+                        </div>
+                        <div class="form-group">
+                            <label for="tagsInput">태그</label>
+                            <input type="text" id="tagsInput" placeholder="태그1, 태그2, 태그3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor Tabs -->
+                <div class="editor-tabs">
+                    <button class="tab-btn active" data-tab="write">작성</button>
+                    <button class="tab-btn" data-tab="preview">미리보기</button>
+                </div>
+
+                <!-- Editor Content -->
+                <div class="editor-content">
+                    <div id="writeTab" class="tab-content active">
+                        <div class="editor-toolbar">
+                            <button class="tool-btn" data-action="bold" title="굵게 (Ctrl+B)">
+                                <strong>B</strong>
+                            </button>
+                            <button class="tool-btn" data-action="italic" title="기울임 (Ctrl+I)">
+                                <em>I</em>
+                            </button>
+                            <button class="tool-btn" data-action="heading" title="제목">
+                                H
+                            </button>
+                            <button class="tool-btn" data-action="link" title="링크 (Ctrl+K)">
+                                🔗
+                            </button>
+                            <button class="tool-btn" data-action="image" title="이미지">
+                                🖼️
+                            </button>
+                            <button class="tool-btn" data-action="code" title="코드">
+                                &lt;/&gt;
+                            </button>
+                            <button class="tool-btn" data-action="quote" title="인용">
+                                "
+                            </button>
+                            <button class="tool-btn" data-action="list" title="목록">
+                                ≡
+                            </button>
+                        </div>
+                        <textarea id="markdownEditor" placeholder="마크다운으로 작성하세요..."></textarea>
+                    </div>
+                    <div id="previewTab" class="tab-content">
+                        <div id="preview" class="preview-content"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Image Upload Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>이미지 업로드</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="uploadArea">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                </div>
+                <div id="imagePreview" class="image-preview" style="display: none;">
+                    <img id="previewImg" src="" alt="Preview">
+                    <input type="text" id="imageNameInput" placeholder="파일명 (확장자 제외)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelUpload">취소</button>
+                <button class="btn btn-primary" id="confirmUpload" disabled>업로드</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="{{ '/editor/script.js' | relative_url }}"></script>
+</body>
+</html>
