@@ -24,6 +24,12 @@ nav-links:
     url: /
   - title: 포스트
     url: /posts
+  - title: 태그
+    url: /tags
+  - title: 아카이브
+    url: /archive
+  - title: 검색
+    url: /search
   - title: 소개
     url: /about
 

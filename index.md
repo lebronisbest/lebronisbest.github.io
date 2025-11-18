@@ -13,6 +13,16 @@ subtitle: 개발과 일상을 기록하는 블로그
   </p>
 </div>
 
+<div class="search-section">
+  <div class="search-container">
+    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input type="text" id="searchInput" class="search-input" placeholder="포스트 검색...">
+  </div>
+</div>
+
 <div class="posts-section">
   <h2 class="section-title">최근 포스트</h2>
   

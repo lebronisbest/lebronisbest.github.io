@@ -1,0 +1,105 @@
+{% if page.share != false %}
+<div class="share-buttons">
+  <span class="share-label">공유하기:</span>
+  <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ site.url }}{{ page.url | url_encode }}" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     class="share-btn share-twitter"
+     aria-label="트위터에 공유">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+    </svg>
+    트위터
+  </a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u={{ site.url }}{{ page.url | url_encode }}" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     class="share-btn share-facebook"
+     aria-label="페이스북에 공유">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+    </svg>
+    페이스북
+  </a>
+  <a href="https://t.me/share/url?url={{ site.url }}{{ page.url | url_encode }}&text={{ page.title | url_encode }}" 
+     target="_blank" 
+     rel="noopener noreferrer"
+     class="share-btn share-telegram"
+     aria-label="텔레그램에 공유">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161l-1.87 8.8c-.138.625-.5.778-.99.485l-2.74-2.02-1.32 1.27c-.15.15-.276.276-.566.276l.198-2.79 5.06-4.58c.22-.198-.05-.307-.34-.11l-6.26 3.94-2.7-.844c-.59-.185-.6-.59.12-.89l10.44-4.02c.49-.18.92.12.76.69z"/>
+    </svg>
+    텔레그램
+  </a>
+  <button class="share-btn share-copy" 
+          onclick="navigator.clipboard.writeText('{{ site.url }}{{ page.url }}'); alert('링크가 복사되었습니다!');"
+          aria-label="링크 복사">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </svg>
+    복사
+  </button>
+</div>
+
+<style>
+.share-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 3rem 0;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.share-label {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.share-btn:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-md);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.share-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 768px) {
+  .share-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .share-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+{% endif %}
+

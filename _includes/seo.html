@@ -1,0 +1,80 @@
+<!-- SEO 최적화 -->
+{% if page.title %}
+  <meta property="og:title" content="{{ page.title }} | {{ site.title }}" />
+  <meta name="twitter:title" content="{{ page.title }} | {{ site.title }}" />
+{% else %}
+  <meta property="og:title" content="{{ site.title }}" />
+  <meta name="twitter:title" content="{{ site.title }}" />
+{% endif %}
+
+{% if page.description %}
+  <meta name="description" content="{{ page.description }}" />
+  <meta property="og:description" content="{{ page.description }}" />
+  <meta name="twitter:description" content="{{ page.description }}" />
+{% elsif page.excerpt %}
+  <meta name="description" content="{{ page.excerpt | strip_html | truncatewords: 30 }}" />
+  <meta property="og:description" content="{{ page.excerpt | strip_html | truncatewords: 30 }}" />
+  <meta name="twitter:description" content="{{ page.excerpt | strip_html | truncatewords: 30 }}" />
+{% else %}
+  <meta name="description" content="{{ site.description }}" />
+  <meta property="og:description" content="{{ site.description }}" />
+  <meta name="twitter:description" content="{{ site.description }}" />
+{% endif %}
+
+{% if page.image %}
+  <meta property="og:image" content="{{ site.url }}{{ page.image }}" />
+  <meta name="twitter:image" content="{{ site.url }}{{ page.image }}" />
+{% elsif site.logo %}
+  <meta property="og:image" content="{{ site.url }}{{ site.logo }}" />
+  <meta name="twitter:image" content="{{ site.url }}{{ site.logo }}" />
+{% endif %}
+
+<meta property="og:url" content="{{ site.url }}{{ page.url }}" />
+<meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}" />
+<meta property="og:site_name" content="{{ site.title }}" />
+
+{% if page.date %}
+  <meta property="article:published_time" content="{{ page.date | date: '%Y-%m-%dT%H:%M:%S%z' }}" />
+{% endif %}
+
+{% if page.tags %}
+  {% for tag in page.tags %}
+    <meta property="article:tag" content="{{ tag }}" />
+  {% endfor %}
+{% endif %}
+
+<meta name="twitter:card" content="summary_large_image" />
+{% if site.social-network-links.twitter %}
+  <meta name="twitter:site" content="@{{ site.social-network-links.twitter }}" />
+{% endif %}
+
+<!-- JSON-LD 구조화된 데이터 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{% if page.layout == 'post' %}BlogPosting{% else %}WebSite{% endif %}",
+  "headline": "{{ page.title | default: site.title }}",
+  "description": "{{ page.description | default: page.excerpt | default: site.description | strip_html | truncatewords: 30 }}",
+  "url": "{{ site.url }}{{ page.url }}",
+  {% if page.date %}
+  "datePublished": "{{ page.date | date: '%Y-%m-%d' }}",
+  "dateModified": "{{ page.date | date: '%Y-%m-%d' }}",
+  {% endif %}
+  "author": {
+    "@type": "Person",
+    "name": "{{ page.author | default: site.author }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site.title }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ site.url }}{{ site.logo | default: '/assets/img/logo.png' }}"
+    }
+  }
+  {% if page.image %}
+  ,"image": "{{ site.url }}{{ page.image }}"
+  {% endif %}
+}
+</script>
+

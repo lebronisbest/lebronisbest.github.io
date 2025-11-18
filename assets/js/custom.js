@@ -204,6 +204,93 @@
     }
 
     // ========================================
+    // Reading Time Calculator
+    // ========================================
+    function initReadingTime() {
+        const readingTimeEl = document.getElementById('readingTime');
+        if (!readingTimeEl) return;
+        
+        const content = document.querySelector('.post-content') || 
+                       document.querySelector('article') || 
+                       document.querySelector('.main-content');
+        if (!content) return;
+        
+        const text = content.innerText || content.textContent;
+        const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        const readingTime = Math.ceil(words / 200); // 분당 200단어 기준
+        
+        readingTimeEl.textContent = `약 ${readingTime}분 읽기`;
+    }
+
+    // ========================================
+    // Table of Contents Generator
+    // ========================================
+    function initTableOfContents() {
+        const tocContainer = document.querySelector('.table-of-contents');
+        if (!tocContainer) return;
+        
+        const content = document.querySelector('.post-content') || document.querySelector('article');
+        if (!content) return;
+        
+        const headings = content.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            tocContainer.remove();
+            return;
+        }
+        
+        const toc = document.getElementById('toc');
+        if (!toc) return;
+        
+        let tocHTML = '<ul class="toc-list">';
+        let currentLevel = 2;
+        
+        headings.forEach((heading, index) => {
+            const level = parseInt(heading.tagName.charAt(1));
+            const id = heading.id || `heading-${index}`;
+            heading.id = id;
+            
+            if (level > currentLevel) {
+                tocHTML += '<ul class="toc-sublist">';
+            } else if (level < currentLevel) {
+                for (let i = currentLevel; i > level; i--) {
+                    tocHTML += '</ul>';
+                }
+            }
+            
+            tocHTML += `<li class="toc-item toc-level-${level}">`;
+            tocHTML += `<a href="#${id}" class="toc-link">${heading.textContent}</a>`;
+            tocHTML += '</li>';
+            
+            currentLevel = level;
+        });
+        
+        // 닫는 태그 추가
+        while (currentLevel > 2) {
+            tocHTML += '</ul>';
+            currentLevel--;
+        }
+        
+        tocHTML += '</ul>';
+        toc.innerHTML = tocHTML;
+        
+        // 활성 항목 하이라이트
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    const link = toc.querySelector(`a[href="#${id}"]`);
+                    if (link) {
+                        toc.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                    }
+                }
+            });
+        }, { rootMargin: '-20% 0px -70% 0px' });
+        
+        headings.forEach(heading => observer.observe(heading));
+    }
+
+    // ========================================
     // Initialize all features
     // ========================================
     function init() {
@@ -216,6 +303,8 @@
                 initScrollAnimations();
                 initSmoothScrolling();
                 initImageLoading();
+                initReadingTime();
+                initTableOfContents();
             });
         } else {
             initThemeToggle();
@@ -224,6 +313,8 @@
             initScrollAnimations();
             initSmoothScrolling();
             initImageLoading();
+            initReadingTime();
+            initTableOfContents();
         }
     }
 

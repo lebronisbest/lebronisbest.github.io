@@ -1,0 +1,29 @@
+<div class="post-meta">
+  <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%Y년 %m월 %d일" }}</time>
+  <span class="reading-time" id="readingTime"></span>
+  {% if page.tags %}
+  <div class="post-tags">
+    {% for tag in page.tags %}
+    <a href="{{ '/tags' | relative_url }}#{{ tag | slugify }}" class="tag">{{ tag }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<script>
+(function() {
+  // 읽기 시간 계산
+  const content = document.querySelector('.post-content') || document.querySelector('article');
+  if (!content) return;
+  
+  const text = content.innerText || content.textContent;
+  const words = text.trim().split(/\s+/).length;
+  const readingTime = Math.ceil(words / 200); // 분당 200단어 기준
+  
+  const readingTimeEl = document.getElementById('readingTime');
+  if (readingTimeEl) {
+    readingTimeEl.textContent = `약 ${readingTime}분 읽기`;
+  }
+})();
+</script>
+

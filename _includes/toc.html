@@ -1,0 +1,147 @@
+{% if page.toc != false %}
+<div class="table-of-contents">
+  <h3 class="toc-title">목차</h3>
+  <nav id="toc" class="toc-nav"></nav>
+</div>
+
+<script>
+(function() {
+  const content = document.querySelector('.post-content') || document.querySelector('article');
+  if (!content) return;
+  
+  const headings = content.querySelectorAll('h2, h3, h4');
+  if (headings.length === 0) {
+    document.querySelector('.table-of-contents')?.remove();
+    return;
+  }
+  
+  const toc = document.getElementById('toc');
+  if (!toc) return;
+  
+  let tocHTML = '<ul class="toc-list">';
+  let currentLevel = 2;
+  
+  headings.forEach((heading, index) => {
+    const level = parseInt(heading.tagName.charAt(1));
+    const id = `heading-${index}`;
+    heading.id = id;
+    
+    if (level > currentLevel) {
+      tocHTML += '<ul class="toc-sublist">';
+    } else if (level < currentLevel) {
+      tocHTML += '</ul>';
+    }
+    
+    tocHTML += `<li class="toc-item toc-level-${level}">`;
+    tocHTML += `<a href="#${id}" class="toc-link">${heading.textContent}</a>`;
+    tocHTML += '</li>';
+    
+    currentLevel = level;
+  });
+  
+  // 닫는 태그 추가
+  while (currentLevel > 2) {
+    tocHTML += '</ul>';
+    currentLevel--;
+  }
+  
+  tocHTML += '</ul>';
+  toc.innerHTML = tocHTML;
+  
+  // 활성 항목 하이라이트
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        const link = toc.querySelector(`a[href="#${id}"]`);
+        if (link) {
+          toc.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  
+  headings.forEach(heading => observer.observe(heading));
+})();
+</script>
+
+<style>
+.table-of-contents {
+  position: sticky;
+  top: 100px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.toc-title {
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-item {
+  margin-bottom: 0.5rem;
+}
+
+.toc-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+  display: block;
+  padding: 0.25rem 0;
+}
+
+.toc-link:hover {
+  color: var(--accent-color);
+}
+
+.toc-link.active {
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+.toc-level-2 .toc-link {
+  font-weight: 500;
+  padding-left: 0;
+}
+
+.toc-level-3 .toc-link {
+  padding-left: 1rem;
+  font-size: 0.9rem;
+}
+
+.toc-level-4 .toc-link {
+  padding-left: 2rem;
+  font-size: 0.85rem;
+}
+
+.toc-sublist {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .table-of-contents {
+    position: relative;
+    top: 0;
+    max-height: none;
+  }
+}
+</style>
+
