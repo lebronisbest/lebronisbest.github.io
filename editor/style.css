@@ -385,22 +385,96 @@ body {
     border-color: var(--accent-color);
 }
 
-/* Markdown Editor */
-#markdownEditor {
+/* Rich Text Editor */
+.rich-editor {
     flex: 1;
     width: 100%;
     padding: 2rem;
     border: none;
-    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-    font-size: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", "Noto Sans KR", sans-serif;
+    font-size: 1.125rem;
     line-height: 1.8;
-    resize: none;
     background: var(--bg-primary);
     color: var(--text-primary);
+    overflow-y: auto;
+    min-height: 400px;
+    outline: none;
 }
 
-#markdownEditor:focus {
-    outline: none;
+.rich-editor:empty:before {
+    content: attr(placeholder);
+    color: var(--text-tertiary);
+    pointer-events: none;
+}
+
+.rich-editor p {
+    margin-bottom: 1.5rem;
+    min-height: 1.5em;
+}
+
+.rich-editor h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.rich-editor h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.rich-editor h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.rich-editor ul,
+.rich-editor ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.rich-editor li {
+    margin-bottom: 0.5rem;
+}
+
+.rich-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.rich-editor a {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.rich-editor blockquote {
+    border-left: 4px solid var(--accent-color);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.toolbar-divider {
+    width: 1px;
+    background: var(--border-color);
+    margin: 0 0.25rem;
+}
+
+/* Markdown Editor (hidden) */
+#markdownEditor {
+    display: none;
 }
 
 /* Preview */
