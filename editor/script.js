@@ -482,32 +482,51 @@ function convertHtmlToMarkdown() {
 function convertMarkdownToHtml(markdown) {
     if (!quill) {
         console.warn('Quill이 아직 초기화되지 않았습니다.');
-        // Quill이 초기화될 때까지 기다렸다가 다시 시도
-        setTimeout(() => {
-            if (quill) {
-                convertMarkdownToHtml(markdown);
-            }
-        }, 100);
+        return;
+    }
+    
+    if (!markdown || !markdown.trim()) {
+        console.warn('마크다운 내용이 비어있습니다.');
+        quill.setText('');
         return;
     }
     
     try {
         // marked가 없으면 텍스트로 설정
         if (typeof marked === 'undefined') {
+            console.warn('marked가 로드되지 않았습니다. 텍스트로 설정합니다.');
             quill.setText(markdown);
             return;
         }
         
+        console.log('마크다운을 HTML로 변환 중...', markdown.substring(0, 100));
         const html = marked.parse(markdown);
+        console.log('변환된 HTML:', html.substring(0, 200));
         
         // Quill의 Delta API를 사용하여 안전하게 콘텐츠 설정
         if (quill.root) {
             // 기존 콘텐츠를 지우고 새 콘텐츠 삽입
             quill.setContents([]);
+            
+            // HTML을 Delta로 변환
             const delta = quill.clipboard.convert({ html: html });
+            console.log('Delta 변환 완료:', delta);
+            
+            // 콘텐츠 설정 (silent 모드로 이벤트 발생 안 함)
             quill.setContents(delta, 'silent');
+            
+            // 변환 후 확인
+            setTimeout(() => {
+                const editorContent = quill.root.innerHTML;
+                console.log('에디터에 로드된 내용:', editorContent.substring(0, 200));
+                if (!editorContent || editorContent.trim() === '' || editorContent.trim() === '<p><br></p>') {
+                    console.warn('에디터가 비어있습니다. 텍스트로 재시도합니다.');
+                    quill.setText(markdown);
+                }
+            }, 100);
         } else {
             // quill.root가 없으면 텍스트로 설정
+            console.warn('quill.root가 없습니다. 텍스트로 설정합니다.');
             quill.setText(markdown);
         }
     } catch (error) {
@@ -515,6 +534,7 @@ function convertMarkdownToHtml(markdown) {
         // 에러 발생 시 텍스트로 설정
         if (quill) {
             try {
+                console.log('에러 발생, 텍스트로 설정합니다.');
                 quill.setText(markdown);
             } catch (e) {
                 console.error('텍스트 설정도 실패:', e);
@@ -821,17 +841,41 @@ async function loadPost(post) {
         }
         
         const content = await response.text();
+        console.log('로드한 원본 내용:', content.substring(0, 200));
+        
         const { frontMatter, body } = parseMarkdown(content);
+        console.log('파싱된 Front Matter:', frontMatter);
+        console.log('파싱된 Body:', body.substring(0, 200));
         
         // 메타데이터 설정
-        titleInput.value = frontMatter.title || '';
-        subtitleInput.value = frontMatter.subtitle || '';
+        titleInput.value = frontMatter.title ? frontMatter.title.replace(/^"|"$/g, '') : '';
+        subtitleInput.value = frontMatter.subtitle ? frontMatter.subtitle.replace(/^"|"$/g, '') : '';
         dateInput.value = frontMatter.date || new Date().toISOString().split('T')[0];
         tagsInput.value = Array.isArray(frontMatter.tags) ? frontMatter.tags.join(', ') : '';
         
         // 마크다운을 HTML로 변환하여 Quill에 표시
         markdownEditor.value = body;
-        convertMarkdownToHtml(body);
+        
+        // Quill이 준비될 때까지 기다린 후 콘텐츠 로드
+        if (!quill) {
+            console.warn('Quill이 아직 초기화되지 않았습니다. 대기 중...');
+            // 최대 3초 대기
+            let attempts = 0;
+            const maxAttempts = 30;
+            const checkQuill = setInterval(() => {
+                attempts++;
+                if (quill) {
+                    clearInterval(checkQuill);
+                    convertMarkdownToHtml(body);
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(checkQuill);
+                    console.error('Quill 초기화 타임아웃');
+                    alert('에디터를 초기화할 수 없습니다. 페이지를 새로고침해주세요.');
+                }
+            }, 100);
+        } else {
+            convertMarkdownToHtml(body);
+        }
         
         currentPost = {
             ...post,
