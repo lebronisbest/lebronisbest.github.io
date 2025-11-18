@@ -49,16 +49,18 @@ layout: none
                 
                 <!-- Token 입력 -->
                 <div class="auth-method">
-                    <div class="form-group">
-                        <label for="tokenInput">Personal Access Token</label>
-                        <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxx">
-                        <small>
-                            <a href="https://github.com/settings/tokens/new?scopes=repo&description=Blog%20Editor" target="_blank">
-                                토큰 생성하기
-                            </a>
-                        </small>
-                    </div>
-                    <button id="authBtn" class="btn btn-secondary">토큰으로 인증</button>
+                    <form id="tokenForm" onsubmit="event.preventDefault(); document.getElementById('authBtn').click();">
+                        <div class="form-group">
+                            <label for="tokenInput">Personal Access Token</label>
+                            <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxx" autocomplete="off">
+                            <small>
+                                <a href="https://github.com/settings/tokens/new?scopes=repo&description=Blog%20Editor" target="_blank">
+                                    토큰 생성하기
+                                </a>
+                            </small>
+                        </div>
+                        <button type="submit" id="authBtn" class="btn btn-secondary">토큰으로 인증</button>
+                    </form>
                 </div>
             </div>
         </div>
