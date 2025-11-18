@@ -985,7 +985,7 @@ async function savePost(isPublish) {
         const base64Content = btoa(unescape(encodeURIComponent(content)));
         
         // GitHub API 요청
-        const method = currentPost && currentPost.sha ? 'PUT' : 'POST';
+        // GitHub Contents API는 PUT만 사용 (sha가 있으면 업데이트, 없으면 생성)
         const targetPath = currentPost && currentPost.path ? currentPost.path : path;
         const url = `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`;
         
@@ -994,12 +994,13 @@ async function savePost(isPublish) {
             content: base64Content,
         };
         
-        if (method === 'PUT' && currentPost && currentPost.sha) {
+        // 기존 파일이 있으면 sha 포함 (업데이트)
+        if (currentPost && currentPost.sha) {
             body.sha = currentPost.sha;
         }
         
-        // PUT 요청 시 최신 sha 확인 (충돌 방지)
-        if (method === 'PUT' && currentPost && currentPost.sha) {
+        // 기존 파일 업데이트 시 최신 sha 확인 (충돌 방지)
+        if (currentPost && currentPost.sha) {
             try {
                 // 최신 파일 정보 가져오기
                 const checkResponse = await fetch(`${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetPath}`, {
@@ -1037,7 +1038,7 @@ async function savePost(isPublish) {
         }
         
         const response = await fetch(url, {
-            method: method,
+            method: 'PUT', // GitHub Contents API는 PUT만 사용
             headers: {
                 'Authorization': `token ${githubToken}`,
                 'Content-Type': 'application/json',
