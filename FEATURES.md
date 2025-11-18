@@ -50,23 +50,23 @@
 
 ## 사용 방법
 
-### 새 포스트 작성
-1. `_posts` 폴더에 `YYYY-MM-DD-제목.md` 형식으로 파일 생성
-2. Front Matter 작성:
-   ```yaml
-   ---
-   layout: post
-   title: "포스트 제목"
-   subtitle: "부제목 (선택사항)"
-   date: YYYY-MM-DD
-   tags: [태그1, 태그2]
-   ---
-   ```
-3. 마크다운으로 내용 작성
+### 새 포스트 작성 (웹 에디터 사용 권장)
+
+**웹 에디터 사용:**
+1. https://lebronisbest.github.io/editor/ 접속
+2. GitHub OAuth 로그인 또는 Personal Access Token 입력
+3. Quill 에디터로 시각적으로 포스트 작성
+4. 저장 또는 발행
+
+**장점:**
+- 마크다운 문법 몰라도 OK
+- 네이버 블로그처럼 시각적으로 작성
+- 이미지 드래그 앤 드롭
+- 충돌 방지 기능
 
 ### 이미지 추가
-- `assets/img/` 폴더에 이미지 업로드
-- 포스트에서 `![설명](/assets/img/파일명.jpg)` 형식으로 삽입
+- 웹 에디터에서 이미지 버튼 클릭 또는 드래그 앤 드롭
+- 자동으로 `assets/img/` 폴더에 업로드됨
 
 ### 다크 모드 토글
 - 우측 상단의 원형 버튼 클릭

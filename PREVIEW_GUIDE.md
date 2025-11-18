@@ -1,16 +1,21 @@
 # 👀 미리보기 방법
 
-## 방법 1: GitHub에 푸시해서 확인 (가장 간단)
+> ⚠️ **중요**: 포스트 작성은 **웹 에디터**를 사용해주세요!  
+> https://lebronisbest.github.io/editor/
 
-1. 파일 저장
-2. Git 커밋 & 푸시
+## 방법 1: 웹 에디터에서 바로 확인 (가장 간단)
+
+1. 웹 에디터에서 포스트 작성
+2. 저장 또는 발행
 3. 1-5분 후 블로그에서 확인: `https://lebronisbest.github.io`
 
 **장점:** 별도 설치 없이 바로 확인 가능
 
 ---
 
-## 방법 2: 로컬에서 Jekyll 실행 (실시간 미리보기)
+## 방법 2: 로컬에서 Jekyll 실행 (미리보기용, 선택사항)
+
+> ⚠️ 포스트 작성은 웹 에디터를 사용해주세요. 이 방법은 블로그를 미리보기 위한 것입니다.
 
 ### 준비물
 - Ruby 설치 필요
@@ -36,21 +41,11 @@ bundle exec jekyll serve
 
 ---
 
-## 방법 3: 온라인 마크다운 미리보기 (빠른 확인)
-
-- **StackEdit**: https://stackedit.io/
-- **Dillinger**: https://dillinger.io/
-- **Markdown Live Preview**: https://markdownlivepreview.com/
-
-이 사이트들에서 마크다운을 붙여넣으면 바로 미리보기를 볼 수 있습니다!
-
-**장점:** 설치 없이 바로 사용 가능
-
 ---
 
 ## 추천
 
-- **빠르게 확인**: 방법 3 (온라인 도구)
-- **실제 블로그처럼**: 방법 1 (GitHub 푸시)
-- **개발 중**: 방법 2 (로컬 Jekyll)
+- **포스트 작성**: 웹 에디터 사용 (https://lebronisbest.github.io/editor/)
+- **빠르게 확인**: 방법 1 (웹 에디터에서 저장 후 확인)
+- **로컬 미리보기**: 방법 2 (로컬 Jekyll 실행)
 
